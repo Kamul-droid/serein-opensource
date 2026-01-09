@@ -1,0 +1,74 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'serein-opensource'
+    environment: 'development'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them
+rule_files: []
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Auth Service
+  - job_name: 'auth-service'
+    static_configs:
+      - targets: ['auth-service:3001']
+    metrics_path: '/metrics'
+
+  # User Service
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['user-service:3002']
+    metrics_path: '/metrics'
+
+  # Conversation Service
+  - job_name: 'conversation-service'
+    static_configs:
+      - targets: ['conversation-service:3003']
+    metrics_path: '/metrics'
+
+  # AI Service
+  - job_name: 'ai-service'
+    static_configs:
+      - targets: ['ai-service:3004']
+    metrics_path: '/metrics'
+
+  # Content Service
+  - job_name: 'content-service'
+    static_configs:
+      - targets: ['content-service:3005']
+    metrics_path: '/metrics'
+
+  # Voice Service
+  - job_name: 'voice-service'
+    static_configs:
+      - targets: ['voice-service:3006']
+    metrics_path: '/metrics'
+
+  # PostgreSQL
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # Redis
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # Ollama
+  - job_name: 'ollama'
+    static_configs:
+      - targets: ['ollama:11434']
+    metrics_path: '/api/metrics'

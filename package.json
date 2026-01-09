@@ -1,0 +1,67 @@
+{
+  "name": "serein-opensource",
+  "version": "1.0.0",
+  "description": "Plateforme IA de bien-être - Version Open Source",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "services/*",
+    "frontend/*",
+    "sdk"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=services/auth-service\" \"npm run dev --workspace=frontend/web\"",
+    "build": "npm run build --workspaces",
+    "build:shared": "npm run build --workspace=shared",
+    "test": "npm run test --workspaces",
+    "test:unit": "npm run test:unit --workspaces",
+    "test:integration": "npm run test:integration --workspaces",
+    "test:e2e": "npm run test:e2e --workspaces",
+    "test:coverage": "npm run test:coverage --workspaces",
+    "lint": "npm run lint --workspaces",
+    "lint:fix": "npm run lint --workspaces -- --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "migrate": "npm run migrate --workspace=services/auth-service",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:build": "docker-compose build",
+    "docker:restart": "docker-compose restart",
+    "docker:ps": "docker-compose ps",
+    "ollama:pull": "docker exec serein-ollama ollama pull llama2",
+    "ollama:list": "docker exec serein-ollama ollama list",
+    "setup:service": "bash scripts/setup-service.sh",
+    "version": "node scripts/version.js",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/serein-opensource.git"
+  },
+  "keywords": [
+    "ai",
+    "wellness",
+    "chatbot",
+    "voice",
+    "conversation",
+    "open-source",
+    "self-hosted"
+  ],
+  "author": "",
+  "license": "MIT"
+}
