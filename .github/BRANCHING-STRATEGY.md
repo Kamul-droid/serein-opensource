@@ -14,6 +14,7 @@ Cette stratégie suit le **Git Flow** adapté pour un projet open source.
   - Requiert tous les tests passants
   - Pas de push direct
 - **Tags**: Tags de version (v1.0.0, v1.1.0, etc.)
+- **Configuration**: Voir [BRANCH-PROTECTION-SETUP.md](BRANCH-PROTECTION-SETUP.md) pour configurer la protection
 
 ### `develop`
 - **Rôle**: Branche d'intégration pour le développement
@@ -103,11 +104,15 @@ fix/042                        ●───────●
 - ✅ Requiert tests passants
 - ✅ Pas de force push
 - ✅ Pas de suppression
+- ✅ Pas de push direct (bloqué)
 
 ### develop
 - ✅ Requiert tests passants
 - ✅ Pas de force push
 - ⚠️ Reviews recommandées
+- ⚠️ Push direct possible mais non recommandé
+
+**📖 Guide de configuration**: [BRANCH-PROTECTION-SETUP.md](BRANCH-PROTECTION-SETUP.md)
 
 ## Exemples de Workflow
 
