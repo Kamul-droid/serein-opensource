@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { NotFoundError } from '@serein/shared/utils/errors';
 import { createLogger } from '@serein/shared/utils/logger';
 import {
   UserProfile,
@@ -45,8 +44,8 @@ export async function getProfile(userId: string): Promise<UserProfile> {
     name: profile.name || undefined,
     avatarUrl: profile.avatarUrl || undefined,
     bio: profile.bio || undefined,
-    beliefs: profile.beliefs.map((b) => b.belief),
-    interests: profile.interests.map((i) => i.interest),
+    beliefs: profile.beliefs.map((b: { belief: string }) => b.belief),
+    interests: profile.interests.map((i: { interest: string }) => i.interest),
     createdAt: profile.createdAt,
     updatedAt: profile.updatedAt,
   };
@@ -83,8 +82,8 @@ export async function updateProfile(
     name: profile.name || undefined,
     avatarUrl: profile.avatarUrl || undefined,
     bio: profile.bio || undefined,
-    beliefs: profile.beliefs.map((b) => b.belief),
-    interests: profile.interests.map((i) => i.interest),
+    beliefs: profile.beliefs.map((b: { belief: string }) => b.belief),
+    interests: profile.interests.map((i: { interest: string }) => i.interest),
     createdAt: profile.createdAt,
     updatedAt: profile.updatedAt,
   };
@@ -171,7 +170,7 @@ export async function getBeliefs(userId: string): Promise<UserBeliefs> {
   }
 
   return {
-    beliefs: profile.beliefs.map((b) => b.belief),
+    beliefs: profile.beliefs.map((b: { belief: string }) => b.belief),
   };
 }
 
@@ -220,7 +219,7 @@ export async function getInterests(userId: string): Promise<UserInterests> {
   }
 
   return {
-    interests: profile.interests.map((i) => i.interest),
+    interests: profile.interests.map((i: { interest: string }) => i.interest),
   };
 }
 
@@ -253,3 +252,4 @@ export async function updateInterests(
 
   return { interests: data.interests };
 }
+
