@@ -2,10 +2,6 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { verifyToken } from '../utils/jwt';
 import { getSession } from '../utils/redis';
 import { AuthenticationError } from '@serein/shared/utils/errors';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
 /**
  * Extend FastifyRequest to include user
  */
@@ -23,7 +19,7 @@ declare module 'fastify' {
  */
 export async function authenticate(
   request: FastifyRequest,
-  reply: FastifyReply
+  _reply: FastifyReply
 ): Promise<void> {
   try {
     const authHeader = request.headers.authorization;
@@ -47,6 +43,9 @@ export async function authenticate(
     const sessionUserId = await getSession(payload.sessionId);
     if (!sessionUserId) {
       throw new AuthenticationError('Session expired');
+    }
+    if (sessionUserId !== payload.userId) {
+      throw new AuthenticationError('Session mismatch');
     }
 
     // Attach user to request

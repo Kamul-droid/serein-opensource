@@ -1,9 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import * as argon2 from 'argon2';
-import { generateAccessToken, generateRefreshToken, verifyToken } from '../utils/jwt';
-import { storeSession, deleteSession } from '../utils/redis';
+import {
+  generateAccessToken,
+  generatePasswordResetToken,
+  generateRefreshToken,
+  verifyToken,
+} from '../utils/jwt';
+import { storeSession, deleteSession, getSession } from '../utils/redis';
 import { config } from '../config';
-import { AuthenticationError, ConflictError, NotFoundError } from '@serein/shared/utils/errors';
+import { AuthenticationError, ConflictError } from '@serein/shared/utils/errors';
 import { createLogger } from '@serein/shared/utils/logger';
 import {
   RegisterRequest,
@@ -176,6 +181,12 @@ export async function refreshAccessToken(refreshToken: string): Promise<{ access
     throw new AuthenticationError('Session expired or invalid');
   }
 
+  // Ensure Redis session is authoritative
+  const redisUserId = await getSession(session.id);
+  if (!redisUserId || redisUserId !== session.userId) {
+    throw new AuthenticationError('Session expired');
+  }
+
   // Generate new access token
   const accessToken = generateAccessToken({
     userId: session.userId,
@@ -203,7 +214,7 @@ export async function forgotPassword(data: ForgotPasswordRequest): Promise<void>
   }
 
   // Generate reset token
-  const resetToken = generateAccessToken({ userId: user.id, email: user.email });
+  const resetToken = generatePasswordResetToken({ userId: user.id, email: user.email });
 
   // Store reset token
   await prisma.passwordResetToken.create({
@@ -255,6 +266,11 @@ export async function resetPassword(data: ResetPasswordRequest): Promise<void> {
   });
 
   // Invalidate all sessions for this user
+  const sessions = await prisma.session.findMany({
+    where: { userId: resetToken.userId },
+    select: { id: true },
+  });
+  await Promise.all(sessions.map((session) => deleteSession(session.id)));
   await prisma.session.deleteMany({
     where: { userId: resetToken.userId },
   });

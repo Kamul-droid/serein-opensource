@@ -39,6 +39,6 @@ export interface ResetPasswordRequest {
 export interface JwtPayload {
   userId: string;
   email: string;
-  type: 'access' | 'refresh';
+  type: 'access' | 'refresh' | 'reset';
   sessionId?: string;
 }

@@ -1,21 +1,18 @@
-import { register, login, logout, refreshAccessToken, forgotPassword, resetPassword } from '../../src/services/auth.service';
 import { PrismaClient } from '@prisma/client';
 import * as argon2 from 'argon2';
-import * as jwt from 'jsonwebtoken';
+import { generateAccessToken, generateRefreshToken, verifyToken } from '../../src/utils/jwt';
+import { getSession, deleteSession } from '../../src/utils/redis';
 
-jest.mock('@prisma/client');
-jest.mock('argon2');
-jest.mock('../../src/utils/jwt');
-jest.mock('../../src/utils/redis');
-
-const mockPrisma = {
+const prismaMock = {
   user: {
     findUnique: jest.fn(),
     create: jest.fn(),
+    update: jest.fn(),
   },
   session: {
     create: jest.fn(),
     findUnique: jest.fn(),
+    findMany: jest.fn(),
     delete: jest.fn(),
     deleteMany: jest.fn(),
   },
@@ -26,9 +23,33 @@ const mockPrisma = {
   },
 };
 
+jest.mock('@prisma/client', () => ({
+  PrismaClient: jest.fn(() => prismaMock),
+}));
+jest.mock('argon2');
+jest.mock('../../src/utils/jwt');
+jest.mock('../../src/utils/redis');
+
+let register: (typeof import('../../src/services/auth.service'))['register'];
+let login: (typeof import('../../src/services/auth.service'))['login'];
+let refreshAccessToken: (typeof import('../../src/services/auth.service'))['refreshAccessToken'];
+let resetPassword: (typeof import('../../src/services/auth.service'))['resetPassword'];
+
 describe('Auth Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (PrismaClient as unknown as jest.Mock).mockImplementation(() => prismaMock);
+    (generateAccessToken as jest.Mock).mockReturnValue('access-token');
+    (generateRefreshToken as jest.Mock).mockReturnValue('refresh-token');
+    (verifyToken as jest.Mock).mockReturnValue({
+      type: 'refresh',
+      userId: 'user-1',
+      email: 'test@example.com',
+    });
+
+    if (!register) {
+      ({ register, login, refreshAccessToken, resetPassword } = require('../../src/services/auth.service'));
+    }
   });
 
   describe('register', () => {
@@ -42,10 +63,10 @@ describe('Auth Service', () => {
         updatedAt: new Date(),
       };
 
-      (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(null);
+      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(null);
       (argon2.hash as jest.Mock).mockResolvedValue('hashed');
-      (mockPrisma.user.create as jest.Mock).mockResolvedValue(mockUser);
-      (mockPrisma.session.create as jest.Mock).mockResolvedValue({
+      (prismaMock.user.create as jest.Mock).mockResolvedValue(mockUser);
+      (prismaMock.session.create as jest.Mock).mockResolvedValue({
         id: 'session-1',
         userId: 'user-1',
         token: 'refresh-token',
@@ -64,7 +85,7 @@ describe('Auth Service', () => {
     });
 
     it('should throw ConflictError if user already exists', async () => {
-      (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue({
+      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue({
         id: 'user-1',
         email: 'test@example.com',
       });
@@ -87,9 +108,9 @@ describe('Auth Service', () => {
         name: 'Test User',
       };
 
-      (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
+      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (argon2.verify as jest.Mock).mockResolvedValue(true);
-      (mockPrisma.session.create as jest.Mock).mockResolvedValue({
+      (prismaMock.session.create as jest.Mock).mockResolvedValue({
         id: 'session-1',
         userId: 'user-1',
         token: 'refresh-token',
@@ -106,7 +127,7 @@ describe('Auth Service', () => {
     });
 
     it('should throw AuthenticationError for invalid credentials', async () => {
-      (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(null);
+      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(
         login({
@@ -114,6 +135,52 @@ describe('Auth Service', () => {
           password: 'wrong',
         })
       ).rejects.toThrow('Invalid email or password');
+    });
+  });
+
+  describe('refreshAccessToken', () => {
+    it('should reject when Redis session is missing', async () => {
+      const mockSession = {
+        id: 'session-1',
+        userId: 'user-1',
+        token: 'refresh-token',
+        expiresAt: new Date(Date.now() + 60 * 1000),
+        user: { email: 'test@example.com' },
+      };
+
+      (prismaMock.session.findUnique as jest.Mock).mockResolvedValue(mockSession);
+      (getSession as jest.Mock).mockResolvedValue(null);
+
+      await expect(refreshAccessToken('refresh-token')).rejects.toThrow('Session expired');
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should delete Redis sessions when resetting password', async () => {
+      (prismaMock.passwordResetToken.findUnique as jest.Mock).mockResolvedValue({
+        id: 'reset-1',
+        userId: 'user-1',
+        token: 'reset-token',
+        used: false,
+        expiresAt: new Date(Date.now() + 60 * 1000),
+        user: { email: 'test@example.com' },
+      });
+      (argon2.hash as jest.Mock).mockResolvedValue('hashed');
+      (prismaMock.session.findMany as jest.Mock).mockResolvedValue([
+        { id: 'session-1' },
+        { id: 'session-2' },
+      ]);
+
+      await resetPassword({
+        token: 'reset-token',
+        newPassword: 'new-password',
+      });
+
+      expect(deleteSession).toHaveBeenCalledWith('session-1');
+      expect(deleteSession).toHaveBeenCalledWith('session-2');
+      expect(prismaMock.session.deleteMany).toHaveBeenCalledWith({
+        where: { userId: 'user-1' },
+      });
     });
   });
 });

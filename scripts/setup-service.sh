@@ -41,7 +41,7 @@ cat > "$SERVICE_DIR/package.json" << EOF
     "migrate": "prisma migrate dev"
   },
   "dependencies": {
-    "@serein/shared": "workspace:*",
+    "@serein/shared": "file:../../shared",
     "express": "^4.18.2",
     "pino": "^8.17.0",
     "pino-http": "^8.5.0",

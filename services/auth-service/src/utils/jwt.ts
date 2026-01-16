@@ -10,6 +10,7 @@ export function generateAccessToken(payload: {
   email: string;
   sessionId: string;
 }): string {
+  const expiresIn = config.jwt.accessTokenExpiresIn as jwt.SignOptions['expiresIn'];
   return jwt.sign(
     {
       userId: payload.userId,
@@ -17,9 +18,9 @@ export function generateAccessToken(payload: {
       sessionId: payload.sessionId,
       type: 'access',
     },
-    config.jwt.secret,
+    config.jwt.secret as jwt.Secret,
     {
-      expiresIn: config.jwt.accessTokenExpiresIn,
+      expiresIn,
     }
   );
 }
@@ -28,15 +29,33 @@ export function generateAccessToken(payload: {
  * Generate refresh token
  */
 export function generateRefreshToken(payload: { userId: string; email: string }): string {
+  const expiresIn = config.jwt.refreshTokenExpiresIn as jwt.SignOptions['expiresIn'];
   return jwt.sign(
     {
       userId: payload.userId,
       email: payload.email,
       type: 'refresh',
     },
-    config.jwt.secret,
+    config.jwt.secret as jwt.Secret,
     {
-      expiresIn: config.jwt.refreshTokenExpiresIn,
+      expiresIn,
+    }
+  );
+}
+
+/**
+ * Generate password reset token
+ */
+export function generatePasswordResetToken(payload: { userId: string; email: string }): string {
+  return jwt.sign(
+    {
+      userId: payload.userId,
+      email: payload.email,
+      type: 'reset',
+    },
+    config.jwt.secret as jwt.Secret,
+    {
+      expiresIn: '1h' as jwt.SignOptions['expiresIn'],
     }
   );
 }
