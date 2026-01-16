@@ -52,6 +52,25 @@ export async function getProfile(userId: string): Promise<UserProfile> {
 }
 
 /**
+ * Provision user resources on user-created event.
+ */
+export async function provisionUser(userId: string): Promise<void> {
+  await prisma.userProfile.upsert({
+    where: { userId },
+    update: {},
+    create: { userId },
+  });
+
+  await prisma.userPreference.upsert({
+    where: { userId },
+    update: {},
+    create: { userId },
+  });
+
+  logger.info({ userId }, 'Provisioned user profile and preferences');
+}
+
+/**
  * Update user profile
  */
 export async function updateProfile(

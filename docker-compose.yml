@@ -13,6 +13,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U serein"]
       interval: 10s
@@ -141,13 +142,16 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - PORT=3001
-      - DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein
+      - AUTH_DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein_auth
       - REDIS_URL=redis://redis:6379
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-15m}
       - JWT_REFRESH_EXPIRES_IN=${JWT_REFRESH_EXPIRES_IN:-7d}
       - SESSION_TIMEOUT_MS=${SESSION_TIMEOUT_MS:-3600000}
       - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
+      - USER_SERVICE_URL=${USER_SERVICE_URL:-http://user-service:3002}
+      - CONVERSATION_SERVICE_URL=${CONVERSATION_SERVICE_URL:-http://conversation-service:3003}
+      - INTERNAL_EVENT_SECRET=${INTERNAL_EVENT_SECRET:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -172,9 +176,10 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - PORT=3002
-      - DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein
+      - USER_DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein_user
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
+      - INTERNAL_EVENT_SECRET=${INTERNAL_EVENT_SECRET:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -182,6 +187,32 @@ services:
       - serein-network
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Conversation Service
+  conversation-service:
+    build:
+      context: ./services/conversation-service
+      dockerfile: Dockerfile
+    container_name: serein-conversation-service
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=3003
+      - CONVERSATION_DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein_conversation
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
+      - INTERNAL_EVENT_SECRET=${INTERNAL_EVENT_SECRET:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - serein-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3003/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -202,6 +233,7 @@ services:
       - weaviate
       - auth-service
       - user-service
+      - conversation-service
     networks:
       - serein-network
 

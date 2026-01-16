@@ -2,21 +2,21 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
+import websocket from '@fastify/websocket';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
-import { registerUserRoutes } from './routes/user.routes';
+import { registerConversationRoutes } from './routes/conversation.routes';
 import { registerInternalRoutes } from './routes/internal.routes';
 import { PrismaClient } from '@prisma/client';
 
-const logger = createLogger('user-service');
+const logger = createLogger('conversation-service');
 const prisma = new PrismaClient();
 
 const app = Fastify({
-  logger: false, // We use our own logger
+  logger: false,
 });
 
 async function setupApp() {
-  // Register plugins
   await app.register(cors, {
     origin: config.cors.origin,
     credentials: true,
@@ -29,15 +29,16 @@ async function setupApp() {
     timeWindow: '1 minute',
   });
 
+  await app.register(websocket);
+
   // Health check
   app.get('/health', async (request, reply) => {
     try {
-      // Check database connection
       await prisma.$queryRaw`SELECT 1`;
 
       return reply.send({
         status: 'healthy',
-        service: 'user-service',
+        service: 'conversation-service',
         timestamp: new Date().toISOString(),
         checks: {
           database: 'ok',
@@ -47,19 +48,16 @@ async function setupApp() {
       logger.error({ error }, 'Health check failed');
       return reply.code(503).send({
         status: 'unhealthy',
-        service: 'user-service',
+        service: 'conversation-service',
         timestamp: new Date().toISOString(),
       });
     }
   });
 
-  // Register internal routes
   await app.register(registerInternalRoutes);
-  // Register routes
-  await app.register(registerUserRoutes);
+  await app.register(registerConversationRoutes);
 }
 
-// Error handler
 app.setErrorHandler((error, request, reply) => {
   logger.error({ error, url: request.url }, 'Request error');
 
@@ -76,19 +74,17 @@ app.setErrorHandler((error, request, reply) => {
   });
 });
 
-// Start server
 const start = async () => {
   try {
     await setupApp();
     await app.listen({ port: config.port, host: '0.0.0.0' });
-    logger.info(`User service listening on port ${config.port}`);
+    logger.info(`Conversation service listening on port ${config.port}`);
   } catch (error) {
     logger.error({ error }, 'Failed to start server');
     process.exit(1);
   }
 };
 
-// Graceful shutdown
 process.on('SIGTERM', async () => {
   logger.info('SIGTERM received, shutting down gracefully');
   await app.close();

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { registerUserRoutes } from '../../src/routes/user.routes';
 
-const hasIntegrationDeps = Boolean(process.env.DATABASE_URL);
+const hasIntegrationDeps = Boolean(process.env.USER_DATABASE_URL || process.env.DATABASE_URL);
 const describeIf = hasIntegrationDeps ? describe : describe.skip;
 
 const JWT_SECRET = 'test-secret';
@@ -11,7 +11,7 @@ const JWT_SECRET = 'test-secret';
 const createApp = async () => {
   const app = Fastify();
 
-  app.setErrorHandler((error, request, reply) => {
+  app.setErrorHandler((error, _request, reply) => {
     if ((error as { statusCode?: number }).statusCode) {
       return reply.code((error as { statusCode: number }).statusCode).send({
         error: (error as { message: string }).message,
@@ -38,6 +38,8 @@ describeIf('User routes integration', () => {
 
   beforeAll(async () => {
     process.env.JWT_SECRET = JWT_SECRET;
+    process.env.USER_DATABASE_URL =
+      process.env.USER_DATABASE_URL || process.env.DATABASE_URL || '';
     prisma = new PrismaClient();
     await prisma.$connect();
   });

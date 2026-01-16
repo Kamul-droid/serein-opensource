@@ -7,6 +7,7 @@ import {
   verifyToken,
 } from '../utils/jwt';
 import { storeSession, deleteSession, getSession } from '../utils/redis';
+import { emitUserCreatedEvent } from '../utils/events';
 import { config } from '../config';
 import { AuthenticationError, ConflictError } from '@serein/shared/utils/errors';
 import { createLogger } from '@serein/shared/utils/logger';
@@ -69,6 +70,9 @@ export async function register(data: RegisterRequest): Promise<AuthResponse> {
   });
 
   logger.info({ userId: user.id, email: user.email }, 'User registered');
+
+  // Fire-and-forget provisioning in downstream services
+  void emitUserCreatedEvent({ userId: user.id, email: user.email });
 
   return {
     user: {
@@ -270,7 +274,7 @@ export async function resetPassword(data: ResetPasswordRequest): Promise<void> {
     where: { userId: resetToken.userId },
     select: { id: true },
   });
-  await Promise.all(sessions.map((session) => deleteSession(session.id)));
+  await Promise.all(sessions.map((session: { id: string }) => deleteSession(session.id)));
   await prisma.session.deleteMany({
     where: { userId: resetToken.userId },
   });
