@@ -1,21 +1,21 @@
-# Comparaison: Version Standard vs Version Open Source
+# Comparison: Standard Version vs Open Source Version
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
 ---
 
-## 1. Vue d'Ensemble
+## 1. Overview
 
-Ce document compare la version standard de Serein (avec services cloud propriétaires) et la version open source (self-hosted).
+This document compares the standard version of Serein (with proprietary cloud services) and the open source version (self-hosted).
 
 ---
 
-## 2. Comparaison des Technologies
+## 2. Technology Comparison
 
-### 2.1 Services IA
+### 2.1 AI Services
 
-| Composant | Version Standard | Version Open Source |
+| Component | Standard Version | Open Source Version |
 |-----------|------------------|---------------------|
 | **LLM** | OpenAI GPT-3.5/4<br>Anthropic Claude | Ollama (Llama/Mistral) |
 | **TTS** | ElevenLabs<br>Azure Speech | Coqui TTS<br>Piper TTS |
@@ -24,7 +24,7 @@ Ce document compare la version standard de Serein (avec services cloud propriét
 
 ### 2.2 Infrastructure
 
-| Composant | Version Standard | Version Open Source |
+| Component | Standard Version | Open Source Version |
 |-----------|------------------|---------------------|
 | **API Gateway** | Kong Cloud<br>AWS API Gateway | Nginx<br>Traefik |
 | **Monitoring** | Datadog<br>New Relic | Prometheus + Grafana |
@@ -32,23 +32,23 @@ Ce document compare la version standard de Serein (avec services cloud propriét
 | **Error Tracking** | Sentry Cloud | Sentry Self-hosted<br>GlitchTip |
 | **Tracing** | Datadog APM | Jaeger |
 
-### 2.3 Base de Données
+### 2.3 Databases
 
-| Composant | Version Standard | Version Open Source |
+| Component | Standard Version | Open Source Version |
 |-----------|------------------|---------------------|
-| **Relationnelle** | PostgreSQL (cloud ou self-hosted) | PostgreSQL (self-hosted) |
-| **Cache** | Redis (cloud ou self-hosted) | Redis (self-hosted) |
-| **Vector** | Pinecone (cloud uniquement) | Weaviate/Qdrant (self-hosted) |
+| **Relational** | PostgreSQL (cloud or self-hosted) | PostgreSQL (self-hosted) |
+| **Cache** | Redis (cloud or self-hosted) | Redis (self-hosted) |
+| **Vector** | Pinecone (cloud only) | Weaviate/Qdrant (self-hosted) |
 
 ---
 
-## 3. Comparaison des Coûts
+## 3. Cost Comparison
 
-### 3.1 Coûts Mensuels Estimés
+### 3.1 Estimated Monthly Costs
 
-| Type | Version Standard | Version Open Source |
+| Type | Standard Version | Open Source Version |
 |------|------------------|---------------------|
-| **Services IA** | | |
+| **AI Services** | | |
 | - LLM (OpenAI GPT-4) | $500-2000 | $0 (local) |
 | - TTS (ElevenLabs) | $100-500 | $0 (local) |
 | - STT (Azure) | $50-200 | $0 (local) |
@@ -57,186 +57,185 @@ Ce document compare la version standard de Serein (avec services cloud propriét
 | - API Gateway (Kong) | $50-200 | $0 (Nginx) |
 | - Monitoring (Datadog) | $100-500 | $0 (Prometheus) |
 | - Error Tracking (Sentry) | $26-80 | $0 (self-hosted) |
-| **Serveurs** | $100-500 | $50-200 |
-| **TOTAL** | **$996-4280/mois** | **$50-200/mois** |
+| **Servers** | $100-500 | $50-200 |
+| **TOTAL** | **$996-4280/month** | **$50-200/month** |
 
-### 3.2 Économies
+### 3.2 Savings
 
-- **Économies mensuelles**: $946-4080
-- **Économies annuelles**: $11,352-48,960
-- **ROI**: Investissement initial en infrastructure récupéré en 1-3 mois
+- **Monthly savings**: $946-4080
+- **Annual savings**: $11,352-48,960
+- **ROI**: Initial infrastructure investment recouped in 1-3 months
 
 ---
 
-## 4. Comparaison des Performances
+## 4. Performance Comparison
 
-### 4.1 Latence
+### 4.1 Latency
 
-| Opération | Version Standard | Version Open Source |
+| Operation | Standard Version | Open Source Version |
 |-----------|------------------|---------------------|
-| **LLM (question simple)** | 1-3s (cloud) | 2-5s (local, dépend du hardware) |
-| **LLM (question complexe)** | 3-10s (cloud) | 5-15s (local, dépend du hardware) |
+| **LLM (simple question)** | 1-3s (cloud) | 2-5s (local, hardware-dependent) |
+| **LLM (complex question)** | 3-10s (cloud) | 5-15s (local, hardware-dependent) |
 | **TTS** | 0.5-1s (cloud) | 1-2s (local) |
 | **STT** | 0.5-1s (cloud) | 1-3s (local) |
-| **Recherche Vectorielle** | 0.1-0.5s (cloud) | 0.2-1s (local) |
+| **Vector Search** | 0.1-0.5s (cloud) | 0.2-1s (local) |
 
-**Note**: La version open source peut être plus rapide avec un GPU dédié.
+**Note**: The open source version can be faster with a dedicated GPU.
 
-### 4.2 Disponibilité
+### 4.2 Availability
 
-| Métrique | Version Standard | Version Open Source |
-|----------|------------------|---------------------|
-| **Uptime** | 99.9% (garanti par cloud) | 99.9% (dépend de votre infrastructure) |
-| **Scalabilité** | Auto-scaling cloud | Scaling manuel ou via Kubernetes |
-| **Redondance** | Multi-region (cloud) | À configurer manuellement |
-
----
-
-## 5. Comparaison des Fonctionnalités
-
-### 5.1 Fonctionnalités Identiques
-
-✅ Les deux versions offrent les mêmes fonctionnalités:
-- Authentification et gestion des utilisateurs
-- Conversations IA (texte et vocal)
-- Recherche de contenu
-- Historique des conversations
-- Gestion des préférences
-- Optimisation des coûts (version standard) / modèles (version open source)
-
-### 5.2 Différences
-
-| Aspect | Version Standard | Version Open Source |
+| Metric | Standard Version | Open Source Version |
 |--------|------------------|---------------------|
-| **Qualité des voix TTS** | Excellente (ElevenLabs) | Bonne (Coqui TTS) |
-| **Qualité LLM** | Excellente (GPT-4) | Bonne à excellente (dépend du modèle) |
-| **Support multi-langues** | Excellent | Bon (dépend des modèles) |
-| **Fine-tuning** | Disponible (coûteux) | Possible (gratuit, mais nécessite expertise) |
+| **Uptime** | 99.9% (cloud guaranteed) | 99.9% (depends on your infrastructure) |
+| **Scalability** | Cloud auto-scaling | Manual scaling or via Kubernetes |
+| **Redundancy** | Multi-region (cloud) | Manually configured |
 
 ---
 
-## 6. Comparaison de la Complexité
+## 5. Feature Comparison
 
-### 6.1 Déploiement
+### 5.1 Identical Features
 
-| Aspect | Version Standard | Version Open Source |
+✅ Both versions offer the same features:
+- Authentication and user management
+- AI conversations (text and voice)
+- Content search
+- Conversation history
+- Preference management
+- Cost optimization (standard) / model optimization (open source)
+
+### 5.2 Differences
+
+| Aspect | Standard Version | Open Source Version |
 |--------|------------------|---------------------|
-| **Complexité initiale** | Faible (services cloud) | Moyenne (self-hosted) |
-| **Maintenance** | Faible (gérée par cloud) | Moyenne à élevée (vous gérez) |
-| **Configuration** | Simple (APIs) | Complexe (infrastructure complète) |
-| **Monitoring** | Intégré (Datadog) | À configurer (Prometheus/Grafana) |
-
-### 6.2 Expertise Requise
-
-| Compétence | Version Standard | Version Open Source |
-|------------|------------------|---------------------|
-| **DevOps** | Basique | Avancée |
-| **Infrastructure** | Minimale | Importante |
-| **ML/AI** | Minimale | Moyenne (pour optimiser les modèles) |
-| **Monitoring** | Minimale | Moyenne (configuration Prometheus) |
+| **TTS voice quality** | Excellent (ElevenLabs) | Good (Coqui TTS) |
+| **LLM quality** | Excellent (GPT-4) | Good to excellent (model-dependent) |
+| **Multi-language support** | Excellent | Good (model-dependent) |
+| **Fine-tuning** | Available (costly) | Possible (free, but requires expertise) |
 
 ---
 
-## 7. Comparaison de la Sécurité
+## 6. Complexity Comparison
 
-### 7.1 Sécurité des Données
+### 6.1 Deployment
 
-| Aspect | Version Standard | Version Open Source |
+| Aspect | Standard Version | Open Source Version |
 |--------|------------------|---------------------|
-| **Localisation** | Cloud (multi-région) | Votre infrastructure |
-| **Chiffrement** | Géré par cloud | À configurer |
-| **Conformité RGPD** | Facilitée (cloud) | Contrôle total |
-| **Audit** | Logs cloud | Logs locaux |
+| **Initial complexity** | Low (cloud services) | Medium (self-hosted) |
+| **Maintenance** | Low (managed by cloud) | Medium to high (self-managed) |
+| **Configuration** | Simple (APIs) | Complex (full infrastructure) |
+| **Monitoring** | Built-in (Datadog) | Needs setup (Prometheus/Grafana) |
 
-### 7.2 Contrôle
+### 6.2 Required Expertise
 
-| Aspect | Version Standard | Version Open Source |
+| Skill | Standard Version | Open Source Version |
+|-------|------------------|---------------------|
+| **DevOps** | Basic | Advanced |
+| **Infrastructure** | Minimal | Significant |
+| **ML/AI** | Minimal | Medium (for model optimization) |
+| **Monitoring** | Minimal | Medium (Prometheus configuration) |
+
+---
+
+## 7. Security Comparison
+
+### 7.1 Data Security
+
+| Aspect | Standard Version | Open Source Version |
 |--------|------------------|---------------------|
-| **Contrôle des données** | Partiel (cloud) | Total (self-hosted) |
-| **Vendor lock-in** | Oui (services cloud) | Non (tout open source) |
-| **Personnalisation** | Limitée (APIs) | Totale (code source) |
+| **Location** | Cloud (multi-region) | Your infrastructure |
+| **Encryption** | Managed by cloud | Must be configured |
+| **GDPR compliance** | Simplified (cloud) | Full control |
+| **Audit** | Cloud logs | Local logs |
+
+### 7.2 Control
+
+| Aspect | Standard Version | Open Source Version |
+|--------|------------------|---------------------|
+| **Data control** | Partial (cloud) | Total (self-hosted) |
+| **Vendor lock-in** | Yes (cloud services) | No (all open source) |
+| **Customization** | Limited (APIs) | Full (source code) |
 
 ---
 
-## 8. Quand Choisir Quelle Version?
+## 8. When to Choose Which Version?
 
-### 8.1 Choisir la Version Standard Si:
+### 8.1 Choose the Standard Version If:
 
-✅ Vous voulez un déploiement rapide
-✅ Vous avez un budget pour les services cloud
-✅ Vous préférez ne pas gérer l'infrastructure
-✅ Vous avez besoin de la meilleure qualité (GPT-4, ElevenLabs)
-✅ Vous avez besoin de scalabilité automatique
-✅ Vous avez une petite équipe DevOps
+✅ You want fast deployment  
+✅ You have budget for cloud services  
+✅ You prefer not to manage infrastructure  
+✅ You need the best quality (GPT-4, ElevenLabs)  
+✅ You need automatic scalability  
+✅ You have a small DevOps team
 
-### 8.2 Choisir la Version Open Source Si:
+### 8.2 Choose the Open Source Version If:
 
-✅ Vous avez un budget limité
-✅ Vous voulez le contrôle total sur vos données
-✅ Vous avez l'expertise DevOps
-✅ Vous voulez éviter le vendor lock-in
-✅ Vous avez des exigences de conformité strictes
-✅ Vous voulez personnaliser profondément le système
-✅ Vous avez une infrastructure existante
-
----
-
-## 9. Migration Entre Versions
-
-### 9.1 De Standard vers Open Source
-
-**Possible mais nécessite**:
-- Migration des données
-- Configuration de l'infrastructure
-- Adaptation du code pour les nouveaux services
-- Formation de l'équipe
-
-**Temps estimé**: 2-4 semaines
-
-### 9.2 D'Open Source vers Standard
-
-**Plus simple**:
-- Remplacement des services locaux par APIs cloud
-- Migration des données vers services cloud
-- Adaptation de la configuration
-
-**Temps estimé**: 1-2 semaines
+✅ You have a limited budget  
+✅ You want full control over your data  
+✅ You have DevOps expertise  
+✅ You want to avoid vendor lock-in  
+✅ You have strict compliance requirements  
+✅ You want deep system customization  
+✅ You already have infrastructure
 
 ---
 
-## 10. Recommandations
+## 9. Migration Between Versions
 
-### 10.1 Pour Démarrage Rapide
+### 9.1 From Standard to Open Source
 
-**Version Standard**: Idéale pour MVP et prototypes rapides
+**Possible but requires**:
+- Data migration
+- Infrastructure setup
+- Code adaptation for new services
+- Team training
 
-### 10.2 Pour Production à Grande Échelle
+**Estimated time**: 2-4 weeks
 
-**Version Standard**: Si budget disponible et besoin de scalabilité automatique
+### 9.2 From Open Source to Standard
 
-**Version Open Source**: Si budget limité et expertise DevOps disponible
+**Simpler**:
+- Replace local services with cloud APIs
+- Migrate data to cloud services
+- Adjust configuration
 
-### 10.3 Pour Conformité Stricte
+**Estimated time**: 1-2 weeks
 
-**Version Open Source**: Contrôle total sur les données et infrastructure
+---
 
-### 10.4 Pour Développement et Test
+## 10. Recommendations
 
-**Version Open Source**: Coûts réduits, environnement de test complet
+### 10.1 For a Quick Start
+
+**Standard Version**: Ideal for MVPs and rapid prototypes
+
+### 10.2 For Large-Scale Production
+
+**Standard Version**: If budget is available and auto-scaling is needed  
+**Open Source Version**: If budget is limited and DevOps expertise is available
+
+### 10.3 For Strict Compliance
+
+**Open Source Version**: Full control over data and infrastructure
+
+### 10.4 For Development and Testing
+
+**Open Source Version**: Lower costs, complete test environment
 
 ---
 
 ## 11. Conclusion
 
-Les deux versions offrent les mêmes fonctionnalités mais diffèrent sur:
-- **Coûts**: Open source = 95% d'économies
-- **Complexité**: Standard = plus simple à déployer
-- **Contrôle**: Open source = contrôle total
-- **Qualité**: Standard = légèrement meilleure (services premium)
-- **Scalabilité**: Standard = automatique, Open source = manuelle
+Both versions offer the same functionality but differ in:
+- **Cost**: Open source = ~95% savings
+- **Complexity**: Standard = easier to deploy
+- **Control**: Open source = full control
+- **Quality**: Standard = slightly better (premium services)
+- **Scalability**: Standard = automatic, Open source = manual
 
-Le choix dépend de vos priorités: budget, contrôle, expertise, et besoins spécifiques.
+The choice depends on your priorities: budget, control, expertise, and specific needs.
 
 ---
 
-**Note**: Il est possible d'utiliser un mix des deux approches (hybride) pour optimiser coûts et performance.
+**Note**: It is possible to use a mix of both approaches (hybrid) to optimize costs and performance.

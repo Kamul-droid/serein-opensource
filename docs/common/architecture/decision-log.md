@@ -1,521 +1,521 @@
-# Architecture Decision Log (ADR) - Commun
+# Architecture Decision Log (ADR) - Shared
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
-Ce document enregistre les décisions architecturales communes importantes prises pour le projet Serein. Certaines décisions peuvent avoir des implémentations différentes selon la version (standard vs open source).
+This document records the key shared architectural decisions made for the Serein project. Some decisions may have different implementations depending on the version (standard vs open source).
 
 ---
 
 ## Format
 
-Chaque ADR suit ce format:
-- **Statut**: Proposé / Accepté / Rejeté / Déprécié
-- **Contexte**: Pourquoi cette décision est nécessaire
-- **Décision**: La décision prise
-- **Conséquences**: Impact de cette décision
-- **Note Version**: Différences d'implémentation selon la version
+Each ADR follows this format:
+- **Status**: Proposed / Accepted / Rejected / Deprecated
+- **Context**: Why this decision is needed
+- **Decision**: The chosen decision
+- **Consequences**: Impact of the decision
+- **Version Note**: Implementation differences by version
 
 ---
 
-## ADR-001: Architecture Microservices
+## ADR-001: Microservices Architecture
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Le système doit être scalable, maintenable et permettre le déploiement indépendant des composants.
+### Context
+The system must be scalable, maintainable, and allow independent component deployment.
 
-### Décision
-Adopter une architecture microservices avec:
-- Services indépendants (auth, user, conversation, AI, content, voice)
-- Communication via APIs REST
-- Chaque service avec sa propre base de données
-- API Gateway pour le routage
+### Decision
+Adopt a microservices architecture with:
+- Independent services (auth, user, conversation, AI, content, voice)
+- Communication via REST APIs
+- Each service with its own database
+- API Gateway for routing
 
-### Conséquences
-- ✅ Scalabilité horizontale facilitée
-- ✅ Déploiement indépendant
-- ✅ Isolation des erreurs
-- ⚠️ Complexité opérationnelle accrue
-- ⚠️ Nécessite orchestration (Kubernetes)
+### Consequences
+- ✅ Easier horizontal scalability
+- ✅ Independent deployment
+- ✅ Error isolation
+- ⚠️ Increased operational complexity
+- ⚠️ Requires orchestration (Kubernetes)
 
-### Note Version
-- **Standard**: API Gateway Kong
-- **Open Source**: API Gateway Nginx/Traefik
+### Version Note
+- **Standard**: Kong API Gateway
+- **Open Source**: Nginx/Traefik API Gateway
 
 ---
 
-## ADR-002: TypeScript pour Tout le Code
+## ADR-002: TypeScript for All Code
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de maintenabilité, typage fort, et meilleure DX (Developer Experience).
+### Context
+Need maintainability, strong typing, and better DX (Developer Experience).
 
-### Décision
-Utiliser TypeScript pour:
-- Tous les services backend
-- Toutes les applications frontend
-- Le SDK
+### Decision
+Use TypeScript for:
+- All backend services
+- All frontend applications
+- The SDK
 
-### Conséquences
-- ✅ Typage statique réduit les erreurs
-- ✅ Meilleure autocomplétion IDE
-- ✅ Refactoring plus sûr
-- ⚠️ Courbe d'apprentissage pour certains développeurs
-- ⚠️ Temps de compilation
+### Consequences
+- ✅ Static typing reduces errors
+- ✅ Better IDE autocomplete
+- ✅ Safer refactoring
+- ⚠️ Learning curve for some developers
+- ⚠️ Compilation time
 
 ---
 
-## ADR-003: PostgreSQL comme Base de Données Principale
+## ADR-003: PostgreSQL as Primary Database
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin d'une base de données relationnelle robuste pour les données structurées (users, conversations, messages).
+### Context
+Need a robust relational database for structured data (users, conversations, messages).
 
-### Décision
-Utiliser PostgreSQL 15+ comme base de données principale avec Prisma comme ORM.
+### Decision
+Use PostgreSQL 15+ as the primary database with Prisma as the ORM.
 
-### Conséquences
-- ✅ Robuste et fiable
-- ✅ Support des transactions ACID
-- ✅ Écosystème riche
-- ✅ Prisma offre excellent DX
-- ⚠️ Nécessite gestion de migrations
-- ⚠️ Scaling vertical plus que horizontal (sans sharding)
+### Consequences
+- ✅ Robust and reliable
+- ✅ ACID transaction support
+- ✅ Rich ecosystem
+- ✅ Prisma provides excellent DX
+- ⚠️ Requires migration management
+- ⚠️ Vertical scaling more than horizontal (without sharding)
 
 ---
 
-## ADR-004: Redis pour Cache et Sessions
+## ADR-004: Redis for Cache and Sessions
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de performance pour cache et gestion de sessions.
+### Context
+Need performance for caching and session management.
 
-### Décision
-Utiliser Redis pour:
-- Cache des réponses IA fréquentes
-- Gestion des sessions utilisateur
+### Decision
+Use Redis for:
+- Cache frequent AI responses
+- User session management
 - Rate limiting
 - Message queue (pub/sub)
 
-### Conséquences
-- ✅ Performance élevée
-- ✅ Structures de données riches
-- ✅ Support pub/sub natif
-- ⚠️ Données volatiles (nécessite persistance si critique)
-- ⚠️ Nécessite gestion de la mémoire
+### Consequences
+- ✅ High performance
+- ✅ Rich data structures
+- ✅ Native pub/sub support
+- ⚠️ Volatile data (requires persistence if critical)
+- ⚠️ Requires memory management
 
 ---
 
-## ADR-005: Multi-Provider pour Services IA
+## ADR-005: Multi-Provider AI Services
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de flexibilité, réduction des risques de vendor lock-in, et optimisation des coûts/ressources.
+### Context
+Need flexibility, reduced vendor lock-in risk, and cost/resource optimization.
 
-### Décision
-Supporter plusieurs providers IA avec abstraction pour faciliter l'ajout de nouveaux providers.
+### Decision
+Support multiple AI providers with an abstraction layer to add new providers easily.
 
-### Conséquences
-- ✅ Flexibilité dans le choix de provider
-- ✅ Réduction du risque de dépendance
-- ✅ Optimisation des coûts/ressources possible
-- ⚠️ Complexité d'abstraction
-- ⚠️ Nécessite tests pour chaque provider
+### Consequences
+- ✅ Provider flexibility
+- ✅ Reduced dependency risk
+- ✅ Potential cost/resource optimization
+- ⚠️ Abstraction complexity
+- ⚠️ Requires tests for each provider
 
-### Note Version
+### Version Note
 - **Standard**: OpenAI, Anthropic (cloud)
-- **Open Source**: Ollama avec modèles multiples (Llama, Mistral, Phi)
+- **Open Source**: Ollama with multiple models (Llama, Mistral, Phi)
 
 ---
 
-## ADR-006: Orchestration Intelligente des Modèles IA
+## ADR-006: Intelligent AI Model Orchestration
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin d'optimiser les coûts/ressources tout en maintenant la qualité des réponses.
+### Context
+Need to optimize costs/resources while maintaining response quality.
 
-### Décision
-Implémenter une logique d'orchestration:
-- Commencer avec modèles économiques/performants
-- Monter en charge vers modèles avancés si question complexe
-- Évaluer la complexité avant de choisir le modèle
+### Decision
+Implement orchestration logic:
+- Start with cost-effective/performance models
+- Scale up to advanced models if the question is complex
+- Evaluate complexity before selecting a model
 
-### Conséquences
-- ✅ Optimisation des coûts/ressources
-- ✅ Qualité maintenue pour questions complexes
-- ⚠️ Logique d'évaluation de complexité à maintenir
-- ⚠️ Nécessite monitoring de l'utilisation
+### Consequences
+- ✅ Cost/resource optimization
+- ✅ Maintained quality for complex questions
+- ⚠️ Complexity evaluation logic to maintain
+- ⚠️ Requires usage monitoring
 
-### Note Version
-- **Standard**: GPT-3.5 → GPT-4 (optimisation coûts)
-- **Open Source**: Phi/Mistral 7B → Llama 2 70B (optimisation ressources)
+### Version Note
+- **Standard**: GPT-3.5 → GPT-4 (cost optimization)
+- **Open Source**: Phi/Mistral 7B → Llama 2 70B (resource optimization)
 
 ---
 
-## ADR-007: Limitation Stricte au Domaine Bien-être
+## ADR-007: Strict Well-being Domain Limitation
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Responsabilité légale et éthique: éviter les conseils médicaux ou hors domaine.
+### Context
+Legal and ethical responsibility: avoid medical advice or out-of-domain content.
 
-### Décision
-Implémenter des filtres de domaine:
-- Détection automatique des questions médicales
-- Redirection vers professionnels pour questions médicales
-- Limitation stricte au domaine bien-être/philosophie/spiritualité
+### Decision
+Implement domain filters:
+- Automatic detection of medical questions
+- Redirect to professionals for medical questions
+- Strict limitation to well-being/philosophy/spirituality
 
-### Conséquences
-- ✅ Réduction des risques légaux
-- ✅ Focus sur le domaine d'expertise
-- ✅ Protection des utilisateurs
-- ⚠️ Nécessite logique de détection robuste
-- ⚠️ Peut frustrer certains utilisateurs
+### Consequences
+- ✅ Reduced legal risk
+- ✅ Focus on domain expertise
+- ✅ User protection
+- ⚠️ Requires robust detection logic
+- ⚠️ May frustrate some users
 
 ---
 
-## ADR-008: API Gateway pour Routage et Sécurité
+## ADR-008: API Gateway for Routing and Security
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de centraliser l'authentification, rate limiting, et routage.
+### Context
+Need centralized authentication, rate limiting, and routing.
 
-### Décision
-Utiliser un API Gateway:
-- Routage vers services backend
-- Authentification centralisée
+### Decision
+Use an API Gateway:
+- Routing to backend services
+- Centralized authentication
 - Rate limiting
-- Logging centralisé
+- Centralized logging
 
-### Conséquences
-- ✅ Sécurité centralisée
-- ✅ Gestion du trafic facilitée
-- ✅ Point d'entrée unique
-- ⚠️ Point de défaillance unique (nécessite HA)
-- ⚠️ Latence additionnelle (minime)
+### Consequences
+- ✅ Centralized security
+- ✅ Simplified traffic management
+- ✅ Single entry point
+- ⚠️ Single point of failure (requires HA)
+- ⚠️ Added latency (minimal)
 
-### Note Version
+### Version Note
 - **Standard**: Kong
 - **Open Source**: Nginx / Traefik
 
 ---
 
-## ADR-009: JWT pour Authentification
+## ADR-009: JWT for Authentication
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin d'authentification stateless, scalable, et sécurisée.
+### Context
+Need stateless, scalable, and secure authentication.
 
-### Décision
-Utiliser JWT (JSON Web Tokens) pour:
-- Tokens d'accès (courte durée: 15 min)
-- Refresh tokens (longue durée: 7 jours)
-- Validation côté API Gateway
+### Decision
+Use JWT (JSON Web Tokens) for:
+- Access tokens (short duration: 15 min)
+- Refresh tokens (long duration: 7 days)
+- Validation at the API Gateway
 
-### Conséquences
+### Consequences
 - ✅ Stateless (scalable)
-- ✅ Pas besoin de session store pour tokens
-- ✅ Standard de l'industrie
-- ⚠️ Tokens non révocables avant expiration (nécessite blacklist si besoin)
-- ⚠️ Taille des tokens (limite si beaucoup de claims)
+- ✅ No session store required for tokens
+- ✅ Industry standard
+- ⚠️ Tokens cannot be revoked before expiration (use blacklist if needed)
+- ⚠️ Token size (limit if many claims)
 
 ---
 
-## ADR-010: Vector Database pour Recherche Sémantique
+## ADR-010: Vector Database for Semantic Search
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de recherche sémantique dans les livres et contenus pour recommandations.
+### Context
+Need semantic search across books and content for recommendations.
 
-### Décision
-Utiliser une vector database pour:
-- Stockage des embeddings de livres
-- Recherche sémantique
-- Recommandations basées sur similarité
+### Decision
+Use a vector database for:
+- Storing book embeddings
+- Semantic search
+- Similarity-based recommendations
 
-### Conséquences
-- ✅ Recherche sémantique performante
-- ✅ Scalabilité
-- ✅ Facile à utiliser
-- ⚠️ Coûts à grande échelle (version standard)
-- ⚠️ Maintenance requise (version open source)
+### Consequences
+- ✅ High-performance semantic search
+- ✅ Scalability
+- ✅ Easy to use
+- ⚠️ Cost at scale (standard version)
+- ⚠️ Maintenance required (open source version)
 
-### Note Version
+### Version Note
 - **Standard**: Pinecone (cloud)
 - **Open Source**: Weaviate / Qdrant (self-hosted)
 
 ---
 
-## ADR-011: React pour Frontend
+## ADR-011: React for Frontend
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin d'une interface utilisateur moderne, réactive, et maintenable.
+### Context
+Need a modern, responsive, and maintainable UI.
 
-### Décision
-Utiliser React 18+ avec:
+### Decision
+Use React 18+ with:
 - TypeScript
-- Vite pour build
-- Tailwind CSS pour styling
-- React Query pour data fetching
+- Vite for builds
+- Tailwind CSS for styling
+- React Query for data fetching
 
-### Conséquences
-- ✅ Écosystème riche
-- ✅ Grande communauté
-- ✅ Performance avec React 18
-- ⚠️ Courbe d'apprentissage
-- ⚠️ Nécessite gestion d'état (Zustand/React Query)
-
----
-
-## ADR-012: Docker pour Containerisation
-
-**Statut**: Accepté  
-**Date**: 09.01.2026
-
-### Contexte
-Besoin de reproductibilité, isolation, et facilité de déploiement.
-
-### Décision
-Utiliser Docker pour:
-- Containerisation de tous les services
-- Docker Compose pour développement local
-- Kubernetes pour production
-
-### Conséquences
-- ✅ Environnements reproductibles
-- ✅ Isolation des services
-- ✅ Facilité de déploiement
-- ⚠️ Courbe d'apprentissage Docker
-- ⚠️ Nécessite gestion des images
+### Consequences
+- ✅ Rich ecosystem
+- ✅ Large community
+- ✅ Performance with React 18
+- ⚠️ Learning curve
+- ⚠️ Requires state management (Zustand/React Query)
 
 ---
 
-## ADR-013: Structured Logging avec JSON
+## ADR-012: Docker for Containerization
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de logs structurés pour faciliter l'analyse et le monitoring.
+### Context
+Need reproducibility, isolation, and easy deployment.
 
-### Décision
-Utiliser Pino pour logging:
-- Format JSON structuré
-- Niveaux de log appropriés
-- Centralisation avec ELK ou Loki
+### Decision
+Use Docker for:
+- Containerizing all services
+- Docker Compose for local development
+- Kubernetes for production
 
-### Conséquences
-- ✅ Logs facilement analysables
-- ✅ Intégration avec outils de monitoring
-- ✅ Performance (Pino est très rapide)
-- ⚠️ Nécessite infrastructure de centralisation
-- ⚠️ Taille des logs (JSON plus volumineux)
+### Consequences
+- ✅ Reproducible environments
+- ✅ Service isolation
+- ✅ Easy deployment
+- ⚠️ Docker learning curve
+- ⚠️ Requires image management
 
-### Note Version
-- **Standard**: ELK Stack ou Datadog Logs
+---
+
+## ADR-013: Structured Logging with JSON
+
+**Status**: Accepted  
+**Date**: 09.01.2026
+
+### Context
+Need structured logs to simplify analysis and monitoring.
+
+### Decision
+Use Pino for logging:
+- Structured JSON format
+- Appropriate log levels
+- Centralization with ELK or Loki
+
+### Consequences
+- ✅ Easily analyzable logs
+- ✅ Integrates with monitoring tools
+- ✅ Performance (Pino is very fast)
+- ⚠️ Requires centralized logging infrastructure
+- ⚠️ Log size (JSON is more verbose)
+
+### Version Note
+- **Standard**: ELK Stack or Datadog Logs
 - **Open Source**: Loki + Promtail
 
 ---
 
 ## ADR-014: Monitoring
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de visibilité sur les performances, erreurs, et santé du système.
+### Context
+Need visibility into performance, errors, and system health.
 
-### Décision
-Utiliser des outils de monitoring pour:
-- Métriques de performance
+### Decision
+Use monitoring tools for:
+- Performance metrics
 - Error tracking
 - Distributed tracing
 
-### Conséquences
-- ✅ Visibilité complète du système
-- ✅ Détection rapide des problèmes
-- ✅ Métriques de performance
-- ⚠️ Coûts (version standard)
-- ⚠️ Nécessite configuration et maintenance
+### Consequences
+- ✅ Full system visibility
+- ✅ Fast issue detection
+- ✅ Performance metrics
+- ⚠️ Costs (standard version)
+- ⚠️ Requires configuration and maintenance
 
-### Note Version
+### Version Note
 - **Standard**: Datadog, Sentry Cloud
 - **Open Source**: Prometheus + Grafana, Sentry Self-hosted, Jaeger
 
 ---
 
-## ADR-015: SDK JavaScript/TypeScript pour Intégration
+## ADR-015: JavaScript/TypeScript SDK for Integration
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de faciliter l'intégration dans différents environnements (web, mobile, widgets).
+### Context
+Need to simplify integration in different environments (web, mobile, widgets).
 
-### Décision
-Créer un SDK officiel:
+### Decision
+Create an official SDK:
 - JavaScript/TypeScript
-- Support ES modules et CommonJS
-- Documentation complète
-- Exemples d'utilisation
+- Support ES modules and CommonJS
+- Full documentation
+- Usage examples
 
-### Conséquences
-- ✅ Facilité d'intégration
-- ✅ Adoption facilitée
-- ✅ Support centralisé
-- ⚠️ Nécessite maintenance du SDK
-- ⚠️ Versioning à gérer
-
----
-
-## ADR-016: Tests avec Couverture Minimale de 80%
-
-**Statut**: Accepté  
-**Date**: 09.01.2026
-
-### Contexte
-Besoin de qualité de code et confiance dans les déploiements.
-
-### Décision
-Exiger:
-- Couverture minimale de 80%
-- Tests unitaires pour logique métier
-- Tests d'intégration pour APIs
-- Tests E2E pour scénarios critiques
-
-### Conséquences
-- ✅ Qualité de code améliorée
-- ✅ Confiance dans les changements
-- ✅ Documentation vivante (tests)
-- ⚠️ Temps de développement augmenté
-- ⚠️ Maintenance des tests
+### Consequences
+- ✅ Easy integration
+- ✅ Easier adoption
+- ✅ Centralized support
+- ⚠️ Requires SDK maintenance
+- ⚠️ Versioning to manage
 
 ---
 
-## ADR-017: CI/CD avec GitHub Actions
+## ADR-016: Tests with Minimum 80% Coverage
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin d'automatisation des tests et déploiements.
+### Context
+Need code quality and confidence in deployments.
 
-### Décision
-Utiliser GitHub Actions pour:
-- Tests automatiques sur PR
-- Linting et formatage
-- Déploiement automatique (staging/production)
-- Génération de documentation
+### Decision
+Require:
+- Minimum 80% coverage
+- Unit tests for business logic
+- Integration tests for APIs
+- E2E tests for critical scenarios
 
-### Conséquences
-- ✅ Automatisation complète
-- ✅ Intégré à GitHub
-- ✅ Gratuit pour open-source
-- ⚠️ Nécessite configuration
-- ⚠️ Limites sur les minutes gratuites
+### Consequences
+- ✅ Improved code quality
+- ✅ Confidence in changes
+- ✅ Living documentation (tests)
+- ⚠️ Increased development time
+- ⚠️ Test maintenance
 
 ---
 
-## ADR-018: Prisma comme ORM
+## ADR-017: CI/CD with GitHub Actions
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin d'un ORM type-safe, avec migrations, et excellent DX.
+### Context
+Need automation for tests and deployments.
 
-### Décision
-Utiliser Prisma comme ORM:
-- Type-safety avec TypeScript
-- Migrations automatiques
+### Decision
+Use GitHub Actions for:
+- Automated tests on PRs
+- Linting and formatting
+- Automated deployment (staging/production)
+- Documentation generation
+
+### Consequences
+- ✅ Full automation
+- ✅ Integrated with GitHub
+- ✅ Free for open source
+- ⚠️ Requires configuration
+- ⚠️ Limits on free minutes
+
+---
+
+## ADR-018: Prisma as ORM
+
+**Status**: Accepted  
+**Date**: 09.01.2026
+
+### Context
+Need a type-safe ORM with migrations and excellent DX.
+
+### Decision
+Use Prisma as the ORM:
+- Type safety with TypeScript
+- Automatic migrations
 - Excellent tooling (Prisma Studio)
-- Support PostgreSQL natif
+- Native PostgreSQL support
 
-### Conséquences
-- ✅ Type-safety excellent
-- ✅ Migrations faciles
-- ✅ DX exceptionnelle
-- ⚠️ Courbe d'apprentissage
-- ⚠️ Génération de code nécessaire
-
----
-
-## ADR-019: WebSocket pour Conversations Temps Réel
-
-**Statut**: Accepté  
-**Date**: 09.01.2026
-
-### Contexte
-Besoin de conversations fluides en temps réel, surtout pour mode vocal.
-
-### Décision
-Utiliser WebSocket pour:
-- Conversations en temps réel
-- Streaming des réponses IA
-- Mise à jour de l'état de conversation
-
-### Conséquences
-- ✅ Expérience utilisateur fluide
-- ✅ Réponses en streaming
-- ✅ Réactivité améliorée
-- ⚠️ Complexité de gestion des connexions
-- ⚠️ Nécessite gestion de reconnexion
+### Consequences
+- ✅ Excellent type safety
+- ✅ Easy migrations
+- ✅ Great DX
+- ⚠️ Learning curve
+- ⚠️ Code generation required
 
 ---
 
-## ADR-020: Rate Limiting par Utilisateur
+## ADR-019: WebSocket for Real-Time Conversations
 
-**Statut**: Accepté  
+**Status**: Accepted  
 **Date**: 09.01.2026
 
-### Contexte
-Besoin de protéger le système contre abus et contrôler les coûts/ressources.
+### Context
+Need smooth real-time conversations, especially for voice mode.
 
-### Décision
-Implémenter rate limiting:
-- Par utilisateur authentifié
-- Par IP pour endpoints publics
-- Configurable par endpoint
-- Utilisation de Redis pour compteurs
+### Decision
+Use WebSocket for:
+- Real-time conversations
+- AI response streaming
+- Conversation state updates
 
-### Conséquences
-- ✅ Protection contre abus
-- ✅ Contrôle des coûts/ressources
-- ✅ Équité d'usage
-- ⚠️ Peut bloquer utilisateurs légitimes si mal configuré
-- ⚠️ Nécessite tuning des limites
+### Consequences
+- ✅ Smooth user experience
+- ✅ Streaming responses
+- ✅ Improved responsiveness
+- ⚠️ Connection management complexity
+- ⚠️ Requires reconnection handling
+
+---
+
+## ADR-020: Rate Limiting per User
+
+**Status**: Accepted  
+**Date**: 09.01.2026
+
+### Context
+Need to protect the system against abuse and control costs/resources.
+
+### Decision
+Implement rate limiting:
+- Per authenticated user
+- Per IP for public endpoints
+- Configurable per endpoint
+- Use Redis for counters
+
+### Consequences
+- ✅ Abuse protection
+- ✅ Cost/resource control
+- ✅ Fair usage
+- ⚠️ May block legitimate users if misconfigured
+- ⚠️ Requires tuning limits
 
 ---
 
 ## Notes
 
-- Les ADRs sont des documents vivants et peuvent être mis à jour
-- Les décisions peuvent être révisées si le contexte change
-- Toute nouvelle décision architecturale importante doit être documentée ici
-- Les différences d'implémentation entre versions sont notées dans chaque ADR
+- ADRs are living documents and can be updated
+- Decisions may be revisited if context changes
+- Any new important architectural decision must be documented here
+- Implementation differences between versions are noted in each ADR
 
 ---
 
-**Note**: Ce document décrit les décisions communes. Pour les décisions spécifiques à chaque version, voir les ADRs dans la documentation de chaque version.
+**Note**: This document describes shared decisions. For version-specific decisions, see the ADRs in each version's documentation.

@@ -1,39 +1,39 @@
 # Documentation - Serein Open Source
 
-Documentation complète de la version open source de Serein utilisant uniquement des technologies open source.
+Complete documentation for the open source version of Serein using only open source technologies.
 
-## Structure de la Documentation
+## Documentation Structure
 
-### Documentation Spécifique Open Source
-- [Roadmap de Développement](ROADMAP.md) - Feuille de route complète du développement
-- [Architecture Système Open Source](architecture/system-architecture.md) - Architecture avec services open source
-- [Stack Technologique Open Source](technology-stack.md) - Technologies open source recommandées
-- [Guide de Déploiement Self-Hosted](deployment/self-hosted.md) - Guide complet de déploiement
-- [Comparaison Standard vs Open Source](comparison.md) - Comparaison détaillée des deux versions
+### Open Source-Specific Documentation
+- [Development Roadmap](ROADMAP.md) - Full development roadmap
+- [Open Source System Architecture](architecture/system-architecture.md) - Architecture with open source services
+- [Open Source Technology Stack](technology-stack.md) - Recommended open source technologies
+- [Self-Hosted Deployment Guide](deployment/self-hosted.md) - Complete deployment guide
+- [Standard vs Open Source Comparison](comparison.md) - Detailed comparison of both versions
 
-### Documentation Commune
-- [Exigences Fonctionnelles](common/requirements/functional-requirements.md) - 56 exigences fonctionnelles
-- [Exigences Non-Fonctionnelles](common/requirements/non-functional-requirements.md) - 76 exigences non-fonctionnelles
-- [Architecture Système](common/architecture/system-architecture.md) - Architecture de base
-- [Boundaries](common/architecture/boundaries.md) - Limites du système
-- [Decision Log (ADR)](common/architecture/decision-log.md) - Décisions architecturales
-- [Stratégie de Tests](common/testing/test-strategy.md) - Stratégie complète de tests
+### Shared Documentation
+- [Functional Requirements](common/requirements/functional-requirements.md) - 56 functional requirements
+- [Non-Functional Requirements](common/requirements/non-functional-requirements.md) - 76 non-functional requirements
+- [System Architecture](common/architecture/system-architecture.md) - Base architecture
+- [Boundaries](common/architecture/boundaries.md) - System boundaries
+- [Decision Log (ADR)](common/architecture/decision-log.md) - Architectural decisions
+- [Test Strategy](common/testing/test-strategy.md) - Complete test strategy
 
 ## Version
 
-- **Version actuelle**: 1.0.0
-- **Dernière mise à jour**: 09.01.2026
+- **Current version**: 1.0.0
+- **Last updated**: 09.01.2026
 - **CHANGELOG**: [CHANGELOG.md](../CHANGELOG.md)
 
-## Caractéristiques de cette Version
+## Version Highlights
 
-- ✅ Services IA open source (Ollama, Coqui TTS, Whisper)
-- ✅ Vector DB open source (Weaviate/Qdrant)
-- ✅ Monitoring open source (Prometheus, Grafana, Loki)
-- ✅ Déploiement self-hosted
-- ✅ Coûts: $50-200/mois (infrastructure uniquement)
+- ✅ Open source AI services (Ollama, Coqui TTS, Whisper)
+- ✅ Open source vector DB (Weaviate/Qdrant)
+- ✅ Open source monitoring (Prometheus, Grafana, Loki)
+- ✅ Self-hosted deployment
+- ✅ Costs: $50-200/month (infrastructure only)
 
-## Services Open Source Utilisés
+## Open Source Services Used
 
 - **LLM**: Ollama (Llama, Mistral, Phi)
 - **TTS**: Coqui TTS / Piper TTS
@@ -43,6 +43,6 @@ Documentation complète de la version open source de Serein utilisant uniquement
 - **Logging**: Loki + Promtail
 - **Tracing**: Jaeger
 
-## Comparaison
+## Comparison
 
-Pour comparer avec la version standard, voir [Comparaison Standard vs Open Source](comparison.md).
+To compare with the standard version, see [Standard vs Open Source Comparison](comparison.md).

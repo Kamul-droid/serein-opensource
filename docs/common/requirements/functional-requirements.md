@@ -1,132 +1,132 @@
-# Exigences Fonctionnelles - Plateforme IA de Bien-être
+# Functional Requirements - AI Well-being Platform
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
 ---
 
-## 1. Gestion des Utilisateurs
+## 1. User Management
 
-### 1.1 Authentification et Identité
-- **FR-001**: Le système doit permettre l'authentification des utilisateurs (inscription, connexion, déconnexion)
-- **FR-002**: Le système doit gérer l'identité unique de chaque utilisateur pour assurer la continuité des échanges
-- **FR-003**: Le système doit permettre la récupération de compte (mot de passe oublié)
-- **FR-004**: Le système doit gérer les sessions utilisateur avec timeout configurable
+### 1.1 Authentication and Identity
+- **FR-001**: The system must support user authentication (register, login, logout)
+- **FR-002**: The system must manage a unique identity for each user to ensure conversation continuity
+- **FR-003**: The system must allow account recovery (forgot password)
+- **FR-004**: The system must manage user sessions with configurable timeouts
 
-### 1.2 Profil Utilisateur
-- **FR-005**: Le système doit permettre à l'utilisateur de définir ses croyances et centres d'intérêt
-- **FR-006**: Le système doit permettre la modification du profil utilisateur
-- **FR-007**: Le système doit stocker les préférences de l'utilisateur (voix, mode de communication)
-
----
-
-## 2. Conversation avec l'Agent IA
-
-### 2.1 Collecte d'Informations Initiales
-- **FR-008**: L'agent IA doit demander à l'utilisateur ses croyances et centres d'intérêt lors de la première interaction
-- **FR-009**: L'agent IA doit adapter ses questions en fonction des réponses précédentes
-
-### 2.2 Recherche de Contenu
-- **FR-010**: Le système doit rechercher des ouvrages de référence (philosophiques, spirituels, bien-être) basés sur les croyances de l'utilisateur
-- **FR-011**: Le système doit proposer des discussions autour des thèmes choisis par l'utilisateur
-- **FR-012**: Le système doit utiliser des sources fiables et vérifiées pour les références
-
-### 2.3 Gestion des Conversations
-- **FR-013**: Le système doit enregistrer toutes les conversations dans une base de données
-- **FR-014**: Le système doit permettre de reprendre les conversations précédentes lors des connexions suivantes
-- **FR-015**: Le système doit maintenir le contexte de conversation entre les sessions
-- **FR-016**: Le système doit permettre à l'utilisateur de consulter l'historique des conversations
+### 1.2 User Profile
+- **FR-005**: The system must allow users to define their beliefs and interests
+- **FR-006**: The system must allow users to update their profile
+- **FR-007**: The system must store user preferences (voice, communication mode)
 
 ---
 
-## 3. Modes de Communication
+## 2. Conversation with the AI Agent
 
-### 3.1 Communication Vocale
-- **FR-017**: Le système doit permettre la conversation vocale avec l'agent IA
-- **FR-018**: Le système doit offrir le choix entre une voix masculine ou féminine
-- **FR-019**: La voix doit être modulable, naturelle et non mécanique
-- **FR-020**: Le système doit supporter la reconnaissance vocale (speech-to-text)
-- **FR-021**: Le système doit supporter la synthèse vocale (text-to-speech)
+### 2.1 Initial Information Collection
+- **FR-008**: The AI agent must ask the user about beliefs and interests during the first interaction
+- **FR-009**: The AI agent must adapt its questions based on previous answers
 
-### 3.2 Communication Textuelle
-- **FR-022**: Le système doit permettre la conversation par texte/écrit
-- **FR-023**: L'utilisateur doit pouvoir choisir entre mode vocal et mode texte
-- **FR-024**: Le système doit permettre le basculement entre modes pendant une conversation
+### 2.2 Content Search
+- **FR-010**: The system must search reference works (philosophy, spirituality, well-being) based on the user's beliefs
+- **FR-011**: The system must propose discussions around the themes chosen by the user
+- **FR-012**: The system must use reliable and verified sources for references
 
----
-
-## 4. Gestion de l'Intelligence Artificielle
-
-### 4.1 Orchestration des Modèles
-- **FR-025**: Le système doit utiliser en priorité des modèles moins coûteux (Ollama: Phi, Mistral 7B)
-- **FR-026**: Le système doit monter en charge vers des modèles plus complexes (Llama 2 70B, Mistral Large) lorsque les questions deviennent plus difficiles
-- **FR-027**: Le système doit évaluer la complexité des questions pour déterminer le modèle approprié
-
-### 4.2 Limitation du Domaine
-- **FR-028**: L'agent IA doit se limiter strictement au domaine du bien-être
-- **FR-029**: Pour toute question liée à la santé ou aux maladies, l'agent doit préciser qu'il ne s'agit pas d'un professionnel de santé
-- **FR-030**: L'agent doit orienter l'utilisateur vers des sources ou professionnels appropriés pour les questions médicales
-- **FR-031**: Les réponses doivent rester orientées vers le bien-être, la philosophie et la spiritualité
-- **FR-032**: L'agent ne doit jamais fournir de diagnostic médical
-
-### 4.3 Gestion des Réponses
-- **FR-033**: Si l'agent ne trouve pas de réponse adéquate, il doit l'indiquer clairement à l'utilisateur
-- **FR-034**: Le système doit fournir des réponses contextuelles basées sur l'historique de conversation
-- **FR-035**: Le système doit pouvoir suggérer des ressources supplémentaires (livres, articles, etc.)
+### 2.3 Conversation Management
+- **FR-013**: The system must store all conversations in a database
+- **FR-014**: The system must allow users to resume previous conversations on subsequent logins
+- **FR-015**: The system must maintain conversation context across sessions
+- **FR-016**: The system must allow users to view conversation history
 
 ---
 
-## 5. Intégration et Compatibilité
+## 3. Communication Modes
 
-### 5.1 Plateforme Agnostique
-- **FR-036**: La plateforme doit être agnostique et intégrable sur n'importe quel environnement
-- **FR-037**: L'architecture doit permettre une intégration simple en JavaScript
-- **FR-038**: L'architecture doit permettre une intégration simple en React
-- **FR-039**: L'architecture doit permettre une intégration avec d'autres frameworks
-- **FR-040**: Les composants doivent être clairement définis et bien documentés
+### 3.1 Voice Communication
+- **FR-017**: The system must support voice conversation with the AI agent
+- **FR-018**: The system must offer a choice between a male or female voice
+- **FR-019**: The voice must be adjustable, natural, and non-robotic
+- **FR-020**: The system must support speech recognition (speech-to-text)
+- **FR-021**: The system must support speech synthesis (text-to-speech)
 
----
-
-## 6. Interface Utilisateur
-
-### 6.1 Expérience Utilisateur
-- **FR-041**: L'interface doit être intuitive et facile à utiliser
-- **FR-042**: L'interface doit être responsive (mobile, tablette, desktop)
-- **FR-043**: L'interface doit permettre un accès rapide aux fonctionnalités principales
-- **FR-044**: L'interface doit afficher clairement l'état de la conversation (en cours, en attente, etc.)
+### 3.2 Text Communication
+- **FR-022**: The system must support text-based conversation
+- **FR-023**: The user must be able to choose between voice and text modes
+- **FR-024**: The system must allow switching between modes during a conversation
 
 ---
 
-## 7. Gestion des Données
+## 4. AI Management
 
-### 7.1 Stockage
-- **FR-045**: Le système doit stocker les profils utilisateur de manière sécurisée
-- **FR-046**: Le système doit stocker l'historique des conversations
-- **FR-047**: Le système doit permettre la sauvegarde et la restauration des données
-- **FR-048**: Le système doit respecter les réglementations sur la protection des données (RGPD)
+### 4.1 Model Orchestration
+- **FR-025**: The system must prioritize less costly models (Ollama: Phi, Mistral 7B)
+- **FR-026**: The system must scale up to more complex models (Llama 2 70B, Mistral Large) as questions become harder
+- **FR-027**: The system must evaluate question complexity to determine the appropriate model
 
----
+### 4.2 Domain Limitation
+- **FR-028**: The AI agent must strictly stay within the well-being domain
+- **FR-029**: For health or illness questions, the agent must state it is not a medical professional
+- **FR-030**: The agent must direct users to appropriate sources or professionals for medical questions
+- **FR-031**: Responses must remain oriented toward well-being, philosophy, and spirituality
+- **FR-032**: The agent must never provide medical diagnosis
 
-## 8. Reporting et Analytics
-
-### 8.1 Suivi des Coûts
-- **FR-049**: Le système doit mesurer et tracer l'utilisation des ressources pour chaque appel
-- **FR-050**: Le système doit suivre précisément l'utilisation des modèles (Ollama)
-- **FR-051**: Le système doit fournir des rapports d'utilisation par utilisateur, par session, et par période
-
----
-
-## 9. Gestion des Erreurs
-
-### 9.1 Gestion des Erreurs Utilisateur
-- **FR-052**: Le système doit gérer gracieusement les erreurs de connexion
-- **FR-053**: Le système doit informer l'utilisateur en cas d'erreur de manière claire
-- **FR-054**: Le système doit permettre la récupération après une erreur
-
-### 9.2 Gestion des Erreurs Système
-- **FR-055**: Le système doit logger toutes les erreurs système
-- **FR-056**: Le système doit permettre le diagnostic des problèmes techniques
+### 4.3 Response Handling
+- **FR-033**: If the agent cannot find an adequate answer, it must clearly tell the user
+- **FR-034**: The system must provide contextual responses based on conversation history
+- **FR-035**: The system must suggest additional resources (books, articles, etc.)
 
 ---
 
-**Note**: Cette version utilise des services open source (Ollama, Coqui TTS, Whisper, Weaviate). Pour une version avec services cloud, voir [serein-standard](../../../serein-standard/README.md).
+## 5. Integration and Compatibility
+
+### 5.1 Platform Agnostic
+- **FR-036**: The platform must be environment-agnostic and integrable anywhere
+- **FR-037**: The architecture must allow simple JavaScript integration
+- **FR-038**: The architecture must allow simple React integration
+- **FR-039**: The architecture must allow integration with other frameworks
+- **FR-040**: Components must be clearly defined and well documented
+
+---
+
+## 6. User Interface
+
+### 6.1 User Experience
+- **FR-041**: The interface must be intuitive and easy to use
+- **FR-042**: The interface must be responsive (mobile, tablet, desktop)
+- **FR-043**: The interface must provide quick access to key features
+- **FR-044**: The interface must clearly show conversation state (in progress, waiting, etc.)
+
+---
+
+## 7. Data Management
+
+### 7.1 Storage
+- **FR-045**: The system must store user profiles securely
+- **FR-046**: The system must store conversation history
+- **FR-047**: The system must allow data backup and restore
+- **FR-048**: The system must comply with data protection regulations (GDPR)
+
+---
+
+## 8. Reporting and Analytics
+
+### 8.1 Cost Tracking
+- **FR-049**: The system must measure and trace resource usage for each call
+- **FR-050**: The system must accurately track model usage (Ollama)
+- **FR-051**: The system must provide usage reports per user, session, and period
+
+---
+
+## 9. Error Management
+
+### 9.1 User Error Handling
+- **FR-052**: The system must gracefully handle connection errors
+- **FR-053**: The system must clearly inform the user in case of error
+- **FR-054**: The system must allow recovery after an error
+
+### 9.2 System Error Handling
+- **FR-055**: The system must log all system errors
+- **FR-056**: The system must allow diagnosis of technical issues
+
+---
+
+**Note**: This version uses open source services (Ollama, Coqui TTS, Whisper, Weaviate). For a cloud services version, see [serein-standard](../../../serein-standard/README.md).

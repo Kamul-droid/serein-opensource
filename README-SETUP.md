@@ -1,117 +1,117 @@
 # Setup Guide - Phase 0.1 Infrastructure
 
-Ce guide explique comment mettre en place l'infrastructure de base pour Serein Open Source.
+This guide explains how to set up the base infrastructure for Serein Open Source.
 
-## Prérequis
+## Prerequisites
 
 - Node.js 20 LTS+
-- Docker 24.0+ et Docker Compose 2.0+
+- Docker 24.0+ and Docker Compose 2.0+
 - Git
 
 ## Installation
 
-### 1. Cloner le repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/your-org/serein-opensource.git
 cd serein-opensource
 ```
 
-### 2. Installer les dépendances
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configuration de l'environnement
+### 3. Environment configuration
 
 ```bash
 cp env.example .env
-# Éditer .env avec vos configurations
+# Edit .env with your settings
 ```
 
-### 4. Démarrer les services Docker
+### 4. Start Docker services
 
 ```bash
-# Démarrer tous les services
+# Start all services
 npm run docker:up
 
-# Vérifier les services
+# Check services
 npm run docker:ps
 
-# Voir les logs
+# View logs
 npm run docker:logs
 ```
 
-### 5. Initialiser Ollama (LLM)
+### 5. Initialize Ollama (LLM)
 
 ```bash
-# Télécharger un modèle (ex: Mistral 7B - plus léger)
+# Download a model (e.g., Mistral 7B - lighter)
 npm run ollama:pull mistral
 
-# Ou Llama 2 (plus puissant, nécessite plus de RAM)
+# Or Llama 2 (more powerful, requires more RAM)
 npm run ollama:pull llama2
 
-# Vérifier les modèles disponibles
+# List available models
 npm run ollama:list
 ```
 
-### 6. Vérifier Weaviate
+### 6. Check Weaviate
 
 ```bash
 curl http://localhost:8080/v1/.well-known/ready
 ```
 
-## Structure du Projet
+## Project Structure
 
 ```
 serein-opensource/
-├── services/              # Microservices backend
+├── services/              # Backend microservices
 │   ├── auth-service/
 │   ├── user-service/
 │   ├── conversation-service/
 │   ├── ai-service/
 │   ├── content-service/
 │   └── voice-service/
-├── frontend/              # Applications frontend
-│   ├── web/              # Application web React
-│   └── sdk/              # SDK JavaScript/TypeScript
-├── shared/                # Code partagé
-│   ├── types/            # Types TypeScript partagés
-│   └── utils/            # Utilitaires partagés
-├── infrastructure/        # Configurations infrastructure
-│   ├── nginx/            # Configuration API Gateway
+├── frontend/              # Frontend applications
+│   ├── web/              # React web app
+│   └── sdk/              # JavaScript/TypeScript SDK
+├── shared/                # Shared code
+│   ├── types/            # Shared TypeScript types
+│   └── utils/            # Shared utilities
+├── infrastructure/        # Infrastructure configs
+│   ├── nginx/            # API Gateway configuration
 │   └── monitoring/       # Prometheus, Grafana, Loki
-├── scripts/              # Scripts utilitaires
-└── docker-compose.yml    # Configuration Docker Compose
+├── scripts/              # Utility scripts
+└── docker-compose.yml    # Docker Compose configuration
 ```
 
-## Créer un Nouveau Service
+## Create a New Service
 
-Utilisez le script de setup pour créer un nouveau service avec la structure standard :
+Use the setup script to create a new service with the standard structure:
 
 ```bash
 npm run setup:service <service-name> <port>
 ```
 
-Exemple :
+Example:
 ```bash
 npm run setup:service auth-service 3001
 ```
 
-## Services Docker
+## Docker Services
 
-### Services de Base de Données
+### Database Services
 - **PostgreSQL**: `localhost:5432`
 - **Redis**: `localhost:6379`
 - **Weaviate**: `localhost:8080`
 
-### Services IA
+### AI Services
 - **Ollama**: `localhost:11434`
 - **Coqui TTS**: `localhost:5002`
 - **Whisper**: `localhost:5003`
 
-### Services Monitoring
+### Monitoring Services
 - **Prometheus**: `localhost:9090`
 - **Grafana**: `localhost:3001` (admin/admin)
 - **Loki**: `localhost:3100`
@@ -119,74 +119,74 @@ npm run setup:service auth-service 3001
 ### API Gateway
 - **Nginx**: `localhost:80`
 
-## Scripts Disponibles
+## Available Scripts
 
-### Développement
-- `npm run dev` - Démarrer tous les services en mode développement
-- `npm run build` - Build tous les workspaces
-- `npm run build:shared` - Build le package shared
+### Development
+- `npm run dev` - Start all services in development mode
+- `npm run build` - Build all workspaces
+- `npm run build:shared` - Build the shared package
 
 ### Tests
-- `npm run test` - Lancer tous les tests
-- `npm run test:unit` - Tests unitaires uniquement
-- `npm run test:integration` - Tests d'intégration uniquement
-- `npm run test:coverage` - Tests avec couverture
+- `npm run test` - Run all tests
+- `npm run test:unit` - Unit tests only
+- `npm run test:integration` - Integration tests only
+- `npm run test:coverage` - Tests with coverage
 
-### Qualité de Code
-- `npm run lint` - Linter le code
-- `npm run lint:fix` - Linter et corriger automatiquement
-- `npm run format` - Formater le code
-- `npm run format:check` - Vérifier le formatage
+### Code Quality
+- `npm run lint` - Lint the code
+- `npm run lint:fix` - Lint and auto-fix
+- `npm run format` - Format the code
+- `npm run format:check` - Check formatting
 
 ### Docker
-- `npm run docker:up` - Démarrer tous les services
-- `npm run docker:down` - Arrêter tous les services
-- `npm run docker:logs` - Voir les logs
-- `npm run docker:build` - Build les images
-- `npm run docker:restart` - Redémarrer les services
-- `npm run docker:ps` - Voir l'état des services
+- `npm run docker:up` - Start all services
+- `npm run docker:down` - Stop all services
+- `npm run docker:logs` - View logs
+- `npm run docker:build` - Build images
+- `npm run docker:restart` - Restart services
+- `npm run docker:ps` - View service status
 
 ### Ollama
-- `npm run ollama:pull <model>` - Télécharger un modèle
-- `npm run ollama:list` - Lister les modèles disponibles
+- `npm run ollama:pull <model>` - Download a model
+- `npm run ollama:list` - List available models
 
-## Configuration TypeScript
+## TypeScript Configuration
 
-Chaque service utilise `tsconfig.base.json` comme base et peut l'étendre avec ses propres configurations.
+Each service uses `tsconfig.base.json` as a base and can extend it with its own configs.
 
-## Configuration ESLint/Prettier
+## ESLint/Prettier Configuration
 
-Les configurations sont centralisées dans :
-- `.eslintrc.base.json` - Configuration ESLint de base
-- `.prettierrc.base.json` - Configuration Prettier de base
+Configurations are centralized in:
+- `.eslintrc.base.json` - Base ESLint configuration
+- `.prettierrc.base.json` - Base Prettier configuration
 
-Chaque service peut étendre ces configurations.
+Each service can extend these configurations.
 
-## Prochaines Étapes
+## Next Steps
 
-1. ✅ Infrastructure de base configurée
-2. ⏭️ Phase 1: Implémenter Auth Service et User Service
-3. ⏭️ Phase 2: Implémenter Conversation Service et AI Service
+1. ✅ Base infrastructure configured
+2. ⏭️ Phase 1: Implement Auth Service and User Service
+3. ⏭️ Phase 2: Implement Conversation Service and AI Service
 
-Voir le [ROADMAP.md](docs/ROADMAP.md) pour plus de détails.
+See [ROADMAP.md](docs/ROADMAP.md) for details.
 
 ## Troubleshooting
 
-### Port déjà utilisé
-Si un port est déjà utilisé, modifiez-le dans `docker-compose.yml` ou arrêtez le service qui l'utilise.
+### Port already in use
+If a port is already in use, change it in `docker-compose.yml` or stop the service using it.
 
-### Ollama ne démarre pas
-Vérifiez que vous avez assez de RAM (minimum 8GB recommandé pour Mistral 7B).
+### Ollama does not start
+Check that you have enough RAM (minimum 8GB recommended for Mistral 7B).
 
-### Weaviate ne répond pas
-Vérifiez les logs : `docker logs serein-weaviate`
+### Weaviate not responding
+Check logs: `docker logs serein-weaviate`
 
-### Services ne communiquent pas
-Vérifiez que tous les services sont sur le même réseau Docker (`serein-network`).
+### Services cannot communicate
+Ensure all services are on the same Docker network (`serein-network`).
 
 ## Support
 
-Pour plus d'aide, consultez :
+For more help, see:
 - [Documentation](docs/README.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Architecture](docs/architecture/system-architecture.md)

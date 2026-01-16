@@ -1,116 +1,116 @@
-# Roadmap de Développement - Serein Open Source
+# Development Roadmap - Serein Open Source
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
 ---
 
-## Vue d'Ensemble
+## Overview
 
-Ce document présente le roadmap de développement pour la version open source de Serein, basé sur l'architecture microservices et les exigences fonctionnelles définies.
+This document presents the development roadmap for the open source version of Serein, based on the microservices architecture and the defined functional requirements.
 
-**Durée estimée totale**: 12-18 mois  
-**Équipe recommandée**: 4-6 développeurs full-stack
-
----
-
-## Légende
-
-- 🟢 **Priorité Haute** - Critique pour le MVP
-- 🟡 **Priorité Moyenne** - Important pour la v1.0
-- 🔵 **Priorité Basse** - Améliorations futures
-- ⏱️ **Durée estimée** - En semaines (s)
+**Total estimated duration**: 12-18 months  
+**Recommended team**: 4-6 full-stack developers
 
 ---
 
-## Phase 0: Setup & Infrastructure (4-6 semaines)
+## Legend
 
-### Objectifs
-- Mettre en place l'infrastructure de base
-- Configurer l'environnement de développement
-- Préparer les outils CI/CD
+- 🟢 **High Priority** - Critical for MVP
+- 🟡 **Medium Priority** - Important for v1.0
+- 🔵 **Low Priority** - Future improvements
+- ⏱️ **Estimated duration** - In weeks (w)
 
-### Tâches
+---
 
-#### 0.1 Infrastructure de Base
-- 🟢 **Setup Docker Compose** (1s)
-  - Configuration pour tous les services
+## Phase 0: Setup & Infrastructure (4-6 weeks)
+
+### Goals
+- Set up the base infrastructure
+- Configure the development environment
+- Prepare CI/CD tooling
+
+### Tasks
+
+#### 0.1 Base Infrastructure
+- 🟢 **Docker Compose Setup** (1w)
+  - Configuration for all services
   - PostgreSQL, Redis, Weaviate
-  - Services IA: Ollama, Coqui TTS, Whisper
+  - AI services: Ollama, Coqui TTS, Whisper
   - Monitoring: Prometheus, Grafana, Loki
   
-- 🟢 **Configuration TypeScript** (1s)
-  - tsconfig.json pour chaque service
-  - Configuration ESLint + Prettier
-  - Scripts de build et développement
+- 🟢 **TypeScript Configuration** (1w)
+  - tsconfig.json for each service
+  - ESLint + Prettier configuration
+  - Build and development scripts
 
-- 🟢 **Structure Monorepo** (1s)
-  - Organisation des services
+- 🟢 **Monorepo Structure** (1w)
+  - Service organization
   - Workspace configuration
-  - Scripts partagés
+  - Shared scripts
 
 #### 0.2 CI/CD Pipeline
-- 🟢 **GitHub Actions** (1s)
-  - Tests automatiques
-  - Linting et formatage
-  - Build des images Docker
+- 🟢 **GitHub Actions** (1w)
+  - Automated tests
+  - Linting and formatting
+  - Docker image builds
   
-- 🟡 **Docker Registry** (1s)
-  - Configuration pour images
-  - Tagging automatique
+- 🟡 **Docker Registry** (1w)
+  - Image registry configuration
+  - Automatic tagging
 
-#### 0.3 Documentation Initiale
-- 🟢 **API Documentation Setup** (1s)
+#### 0.3 Initial Documentation
+- 🟢 **API Documentation Setup** (1w)
   - OpenAPI/Swagger
-  - Documentation des endpoints
+  - Endpoint documentation
 
-**Livrables**:
-- ✅ Docker Compose fonctionnel
-- ✅ CI/CD opérationnel
-- ✅ Structure de projet organisée
+**Deliverables**:
+- ✅ Working Docker Compose
+- ✅ Operational CI/CD
+- ✅ Organized project structure
 
 ---
 
-## Phase 1: Services de Base - Auth & User (6-8 semaines)
+## Phase 1: Core Services - Auth & User (6-8 weeks)
 
-### Objectifs
-- Implémenter l'authentification et la gestion des utilisateurs
-- Base de données PostgreSQL configurée
-- APIs de base fonctionnelles
+### Goals
+- Implement authentication and user management
+- Configure PostgreSQL database
+- Functional base APIs
 
 ### 1.1 Auth Service
 
 #### 1.1.1 Infrastructure
-- 🟢 **Setup Service** (1s)
-  - Structure Express/Fastify
-  - Configuration TypeScript
+- 🟢 **Service Setup** (1w)
+  - Express/Fastify structure
+  - TypeScript configuration
   - Health checks
 
-- 🟢 **Base de Données** (1s)
-  - Schéma Prisma (users, sessions)
+- 🟢 **Database** (1w)
+  - Prisma schema (users, sessions)
   - Migrations
-  - Seeds pour développement
+  - Seeds for development
 
-#### 1.1.2 Fonctionnalités Core
-- 🟢 **Inscription/Connexion** (2s)
-  - FR-001: Authentification (inscription, connexion, déconnexion)
-  - Hashage mots de passe (bcrypt/Argon2)
-  - Validation avec Zod
+#### 1.1.2 Core Features
+- 🟢 **Registration/Login** (2w)
+  - FR-001: Authentication (register, login, logout)
+  - Password hashing (bcrypt/Argon2)
+  - Validation with Zod
   
-- 🟢 **JWT Tokens** (1s)
-  - Génération access tokens (15 min)
-  - Refresh tokens (7 jours)
-  - Validation middleware
+- 🟢 **JWT Tokens** (1w)
+  - Access token generation (15 min)
+  - Refresh tokens (7 days)
+  - Middleware validation
 
-- 🟢 **Sessions** (1s)
-  - FR-004: Gestion sessions avec timeout
-  - Stockage Redis
-  - Invalidation sessions
+- 🟢 **Sessions** (1w)
+  - FR-004: Session management with timeout
+  - Redis storage
+  - Session invalidation
 
-- 🟡 **Récupération Mot de Passe** (1s)
-  - FR-003: Mot de passe oublié
-  - Tokens de réinitialisation
-  - Emails (service externe ou self-hosted)
+- 🟡 **Password Recovery** (1w)
+  - FR-003: Forgot password
+  - Reset tokens
+  - Emails (external service or self-hosted)
 
 **APIs**:
 - `POST /auth/register`
@@ -120,68 +120,68 @@ Ce document présente le roadmap de développement pour la version open source d
 - `POST /auth/forgot-password`
 - `POST /auth/reset-password`
 
-**Tests**: 80% couverture minimum
+**Tests**: minimum 80% coverage
 
 ### 1.2 User Service
 
 #### 1.2.1 Infrastructure
-- 🟢 **Setup Service** (1s)
-  - Structure Express/Fastify
-  - Configuration Prisma
+- 🟢 **Service Setup** (1w)
+  - Express/Fastify structure
+  - Prisma configuration
   - Health checks
 
-#### 1.2.2 Fonctionnalités Core
-- 🟢 **Gestion Profil** (2s)
-  - FR-005: Croyances et centres d'intérêt
-  - FR-006: Modification profil
-  - FR-007: Préférences (voix, mode communication)
+#### 1.2.2 Core Features
+- 🟢 **Profile Management** (2w)
+  - FR-005: Beliefs and interests
+  - FR-006: Profile updates
+  - FR-007: Preferences (voice, communication mode)
   
-- 🟢 **APIs CRUD** (1s)
+- 🟢 **CRUD APIs** (1w)
   - GET/PUT /users/me
   - GET/PUT /users/me/preferences
   - GET/PUT /users/me/beliefs
 
-**Tests**: 80% couverture minimum
+**Tests**: minimum 80% coverage
 
-**Livrables Phase 1**:
-- ✅ Auth Service fonctionnel
-- ✅ User Service fonctionnel
-- ✅ Base de données configurée
-- ✅ Tests unitaires et intégration
+**Phase 1 Deliverables**:
+- ✅ Auth Service functional
+- ✅ User Service functional
+- ✅ Database configured
+- ✅ Unit and integration tests
 
 ---
 
-## Phase 2: Services de Conversation & IA (8-10 semaines)
+## Phase 2: Conversation & AI Services (8-10 weeks)
 
-### Objectifs
-- Implémenter la gestion des conversations
-- Intégrer Ollama pour les LLM
-- Système de recherche de contenu
+### Goals
+- Implement conversation management
+- Integrate Ollama for LLMs
+- Content search system
 
 ### 2.1 Conversation Service
 
 #### 2.1.1 Infrastructure
-- 🟢 **Setup Service** (1s)
-  - Structure Express/Fastify
-  - Configuration Prisma
-  - WebSocket pour temps réel
+- 🟢 **Service Setup** (1w)
+  - Express/Fastify structure
+  - Prisma configuration
+  - WebSocket for real-time
 
-#### 2.1.2 Fonctionnalités Core
-- 🟢 **Gestion Conversations** (2s)
-  - FR-013: Enregistrement conversations
-  - FR-014: Reprendre conversations précédentes
-  - FR-015: Maintenir contexte entre sessions
-  - FR-016: Historique des conversations
+#### 2.1.2 Core Features
+- 🟢 **Conversation Management** (2w)
+  - FR-013: Save conversations
+  - FR-014: Resume previous conversations
+  - FR-015: Maintain context across sessions
+  - FR-016: Conversation history
 
-- 🟢 **Messages** (2s)
-  - CRUD messages
-  - Stockage PostgreSQL
-  - Contexte de conversation
+- 🟢 **Messages** (2w)
+  - Message CRUD
+  - PostgreSQL storage
+  - Conversation context
 
-- 🟡 **WebSocket** (2s)
-  - Streaming des réponses
-  - Temps réel
-  - Gestion reconnexions
+- 🟡 **WebSocket** (2w)
+  - Response streaming
+  - Real-time
+  - Reconnection handling
 
 **APIs**:
 - `POST /conversations`
@@ -192,71 +192,71 @@ Ce document présente le roadmap de développement pour la version open source d
 - `DELETE /conversations/:id`
 - `WebSocket /conversations/:id/stream`
 
-**Tests**: 80% couverture minimum
+**Tests**: minimum 80% coverage
 
 ### 2.2 AI Service
 
 #### 2.2.1 Infrastructure
-- 🟢 **Setup Service** (1s)
-  - Structure Express/Fastify
-  - Client Ollama
-  - Configuration modèles
+- 🟢 **Service Setup** (1w)
+  - Express/Fastify structure
+  - Ollama client
+  - Model configuration
 
-#### 2.2.2 Intégration Ollama
-- 🟢 **Client Ollama** (2s)
-  - Connexion API Ollama
-  - Gestion modèles disponibles
-  - Retry logic et circuit breaker
+#### 2.2.2 Ollama Integration
+- 🟢 **Ollama Client** (2w)
+  - Ollama API connection
+  - Available model management
+  - Retry logic and circuit breaker
 
-- 🟢 **Orchestration Modèles** (3s)
-  - FR-025: Modèles économiques en priorité (Phi, Mistral 7B)
-  - FR-026: Montée en charge vers modèles complexes (Llama 70B)
-  - FR-027: Évaluation complexité questions
-  - Logique de sélection intelligente
+- 🟢 **Model Orchestration** (3w)
+  - FR-025: Prioritize cost-effective models (Phi, Mistral 7B)
+  - FR-026: Scale up to complex models (Llama 70B)
+  - FR-027: Evaluate question complexity
+  - Smart selection logic
 
-- 🟢 **Gestion Réponses** (2s)
-  - FR-033: Gestion "je ne sais pas"
-  - FR-034: Réponses contextuelles
-  - FR-035: Suggestions ressources
+- 🟢 **Response Handling** (2w)
+  - FR-033: "I don't know" handling
+  - FR-034: Context-aware responses
+  - FR-035: Resource suggestions
 
-#### 2.2.3 Limitation Domaine
-- 🟢 **Filtres Domaine** (2s)
-  - FR-028: Limitation domaine bien-être
-  - FR-029: Détection questions médicales
-  - FR-030: Redirection professionnels
-  - FR-031: Réponses orientées bien-être
-  - FR-032: Pas de diagnostic médical
+#### 2.2.3 Domain Limitation
+- 🟢 **Domain Filters** (2w)
+  - FR-028: Well-being domain limitation
+  - FR-029: Medical question detection
+  - FR-030: Professional redirection
+  - FR-031: Well-being oriented responses
+  - FR-032: No medical diagnosis
 
 **APIs**:
 - `POST /ai/chat`
 - `POST /ai/chat/stream`
 - `GET /ai/models`
 
-**Tests**: 80% couverture + tests domaine IA
+**Tests**: 80% coverage + AI domain tests
 
 ### 2.3 Content Service
 
 #### 2.3.1 Infrastructure
-- 🟢 **Setup Service** (1s)
-  - Structure Express/Fastify
-  - Client Weaviate
-  - Configuration vector DB
+- 🟢 **Service Setup** (1w)
+  - Express/Fastify structure
+  - Weaviate client
+  - Vector DB configuration
 
-#### 2.3.2 Intégration Weaviate
-- 🟢 **Setup Weaviate** (1s)
-  - Schéma collections
+#### 2.3.2 Weaviate Integration
+- 🟢 **Weaviate Setup** (1w)
+  - Collection schema
   - Embeddings configuration
   - Index configuration
 
-- 🟢 **Recherche Sémantique** (2s)
-  - FR-010: Recherche ouvrages référence
-  - FR-011: Discussions autour thèmes
-  - FR-012: Sources fiables vérifiées
-  - Embeddings avec Ollama
+- 🟢 **Semantic Search** (2w)
+  - FR-010: Reference book search
+  - FR-011: Theme discussions
+  - FR-012: Verified reliable sources
+  - Embeddings with Ollama
 
-- 🟡 **Recommandations** (1s)
-  - FR-035: Suggestions ressources
-  - Basées sur croyances utilisateur
+- 🟡 **Recommendations** (1w)
+  - FR-035: Resource suggestions
+  - Based on user beliefs
 
 **APIs**:
 - `POST /content/search`
@@ -264,520 +264,520 @@ Ce document présente le roadmap de développement pour la version open source d
 - `GET /content/books/:id`
 - `POST /content/recommendations`
 
-**Tests**: 80% couverture minimum
+**Tests**: minimum 80% coverage
 
-**Livrables Phase 2**:
-- ✅ Conversation Service fonctionnel
-- ✅ AI Service avec Ollama intégré
-- ✅ Content Service avec Weaviate
-- ✅ Tests complets
+**Phase 2 Deliverables**:
+- ✅ Conversation Service functional
+- ✅ AI Service with Ollama integrated
+- ✅ Content Service with Weaviate
+- ✅ Complete tests
 
 ---
 
-## Phase 3: Services Vocaux & Finalisation Backend (6-8 semaines)
+## Phase 3: Voice Services & Backend Finalization (6-8 weeks)
 
-### Objectifs
-- Implémenter la synthèse et reconnaissance vocale
-- Finaliser les services backend
+### Goals
+- Implement speech synthesis and recognition
+- Finalize backend services
 - API Gateway
 
 ### 3.1 Voice Service
 
 #### 3.1.1 Infrastructure
-- 🟢 **Setup Service** (1s)
-  - Structure Express/Fastify
-  - Clients TTS/STT
-  - Gestion fichiers audio
+- 🟢 **Service Setup** (1w)
+  - Express/Fastify structure
+  - TTS/STT clients
+  - Audio file handling
 
 #### 3.1.2 TTS (Text-to-Speech)
-- 🟢 **Intégration Coqui TTS** (2s)
-  - FR-017: Conversation vocale
-  - FR-018: Choix voix masculine/féminine
-  - FR-019: Voix modulable et naturelle
-  - FR-021: Synthèse vocale
-  - Service Python avec API REST
+- 🟢 **Coqui TTS Integration** (2w)
+  - FR-017: Voice conversation
+  - FR-018: Male/female voice selection
+  - FR-019: Adjustable and natural voice
+  - FR-021: Voice synthesis
+  - Python service with REST API
 
-- 🟡 **Alternative Piper TTS** (1s)
-  - Option plus légère
-  - Fallback si Coqui indisponible
+- 🟡 **Piper TTS Alternative** (1w)
+  - Lighter option
+  - Fallback if Coqui is unavailable
 
 #### 3.1.3 STT (Speech-to-Text)
-- 🟢 **Intégration Whisper** (2s)
-  - FR-020: Reconnaissance vocale
-  - Service Python (faster-whisper)
-  - Support multi-langues
-  - API REST
+- 🟢 **Whisper Integration** (2w)
+  - FR-020: Speech recognition
+  - Python service (faster-whisper)
+  - Multi-language support
+  - REST API
 
 **APIs**:
 - `POST /voice/synthesize`
 - `POST /voice/transcribe`
 - `GET /voice/voices`
 
-**Tests**: 80% couverture minimum
+**Tests**: minimum 80% coverage
 
 ### 3.2 API Gateway
 
-#### 3.2.1 Configuration Nginx/Traefik
-- 🟢 **Setup Gateway** (1s)
-  - Routage vers services
+#### 3.2.1 Nginx/Traefik Configuration
+- 🟢 **Gateway Setup** (1w)
+  - Routing to services
   - Load balancing
   - SSL/TLS termination
 
-- 🟢 **Sécurité** (1s)
-  - Authentification centralisée
+- 🟢 **Security** (1w)
+  - Centralized authentication
   - Rate limiting
   - CORS configuration
 
-- 🟡 **Monitoring** (1s)
-  - Logging centralisé
-  - Métriques requêtes
+- 🟡 **Monitoring** (1w)
+  - Centralized logging
+  - Request metrics
 
-### 3.3 Finalisation Backend
+### 3.3 Backend Finalization
 
-#### 3.3.1 Améliorations
-- 🟡 **Cache Redis** (1s)
-  - Cache réponses IA fréquentes
-  - Cache résultats recherche
-  - Optimisation performance
+#### 3.3.1 Improvements
+- 🟡 **Redis Cache** (1w)
+  - Cache frequent AI responses
+  - Cache search results
+  - Performance optimization
 
-- 🟡 **Event Bus** (1s)
+- 🟡 **Event Bus** (1w)
   - Redis Pub/Sub
-  - Communication asynchrone
-  - Découplage services
+  - Async communication
+  - Service decoupling
 
-- 🟡 **Error Handling** (1s)
-  - FR-052: Gestion erreurs connexion
-  - FR-053: Messages erreurs clairs
-  - FR-054: Récupération après erreur
-  - Centralisation erreurs
+- 🟡 **Error Handling** (1w)
+  - FR-052: Connection error handling
+  - FR-053: Clear error messages
+  - FR-054: Recovery after error
+  - Error centralization
 
-**Livrables Phase 3**:
-- ✅ Voice Service fonctionnel
-- ✅ API Gateway configuré
-- ✅ Services backend finalisés
-- ✅ Cache et optimisations
+**Phase 3 Deliverables**:
+- ✅ Voice Service functional
+- ✅ API Gateway configured
+- ✅ Backend services finalized
+- ✅ Cache and optimizations
 
 ---
 
-## Phase 4: Frontend (8-10 semaines)
+## Phase 4: Frontend (8-10 weeks)
 
-### Objectifs
-- Interface utilisateur complète
-- Intégration avec tous les services
-- Expérience utilisateur optimale
+### Goals
+- Full user interface
+- Integration with all services
+- Optimal user experience
 
-### 4.1 Setup Frontend
+### 4.1 Frontend Setup
 
 #### 4.1.1 Infrastructure
-- 🟢 **React + TypeScript** (1s)
+- 🟢 **React + TypeScript** (1w)
   - Vite configuration
   - Tailwind CSS
   - React Query setup
   - Routing (React Router)
 
-- 🟢 **SDK Client** (1s)
-  - Client API TypeScript
-  - Gestion authentification
-  - Gestion erreurs
+- 🟢 **SDK Client** (1w)
+  - TypeScript API client
+  - Authentication management
+  - Error handling
 
-### 4.2 Authentification & Profil
+### 4.2 Authentication & Profile
 
-#### 4.2.1 Pages Auth
-- 🟢 **Inscription/Connexion** (1s)
-  - FR-001: Pages inscription/connexion
-  - Validation formulaires
-  - Gestion erreurs
-  - Redirections
+#### 4.2.1 Auth Pages
+- 🟢 **Registration/Login** (1w)
+  - FR-001: Register/login pages
+  - Form validation
+  - Error handling
+  - Redirects
 
-- 🟢 **Profil Utilisateur** (1s)
-  - FR-005: Définition croyances
-  - FR-006: Modification profil
-  - FR-007: Préférences (voix, mode)
+- 🟢 **User Profile** (1w)
+  - FR-005: Define beliefs
+  - FR-006: Profile updates
+  - FR-007: Preferences (voice, mode)
 
-### 4.3 Interface Conversation
+### 4.3 Conversation Interface
 
 #### 4.3.1 Chat Interface
-- 🟢 **Interface Textuelle** (2s)
-  - FR-022: Conversation par texte
-  - FR-023: Choix mode vocal/texte
-  - FR-024: Basculement entre modes
-  - FR-041: Interface intuitive
-  - FR-042: Responsive (mobile, tablette, desktop)
-  - FR-043: Accès rapide fonctionnalités
-  - FR-044: État conversation clair
+- 🟢 **Text Interface** (2w)
+  - FR-022: Text conversation
+  - FR-023: Voice/text mode selection
+  - FR-024: Switching between modes
+  - FR-041: Intuitive interface
+  - FR-042: Responsive (mobile, tablet, desktop)
+  - FR-043: Quick access to features
+  - FR-044: Clear conversation state
 
-- 🟢 **Historique** (1s)
-  - FR-016: Consultation historique
-  - Liste conversations
-  - Recherche conversations
+- 🟢 **History** (1w)
+  - FR-016: History browsing
+  - Conversation list
+  - Conversation search
 
-#### 4.3.2 Mode Vocal
-- 🟢 **Interface Vocale** (2s)
-  - FR-017: Conversation vocale
-  - Enregistrement audio
-  - Lecture réponses vocales
-  - Indicateurs visuels
+#### 4.3.2 Voice Mode
+- 🟢 **Voice Interface** (2w)
+  - FR-017: Voice conversation
+  - Audio recording
+  - Voice reply playback
+  - Visual indicators
 
-### 4.4 Collecte Informations Initiales
+### 4.4 Initial Information Collection
 
-- 🟢 **Onboarding** (1s)
-  - FR-008: Demander croyances première interaction
-  - FR-009: Adapter questions selon réponses
-  - Flow guidé
+- 🟢 **Onboarding** (1w)
+  - FR-008: Ask beliefs on first interaction
+  - FR-009: Adapt questions based on answers
+  - Guided flow
 
-### 4.5 Améliorations UX
+### 4.5 UX Improvements
 
-- 🟡 **Optimisations** (1s)
+- 🟡 **Optimizations** (1w)
   - Loading states
   - Error boundaries
   - Animations
-  - Accessibilité (WCAG 2.1 AA)
+  - Accessibility (WCAG 2.1 AA)
 
-**Livrables Phase 4**:
-- ✅ Frontend complet
-- ✅ Toutes fonctionnalités intégrées
-- ✅ Responsive et accessible
-- ✅ Tests E2E
+**Phase 4 Deliverables**:
+- ✅ Complete frontend
+- ✅ All features integrated
+- ✅ Responsive and accessible
+- ✅ E2E tests
 
 ---
 
-## Phase 5: Monitoring & Observabilité (4-6 semaines)
+## Phase 5: Monitoring & Observability (4-6 weeks)
 
-### Objectifs
-- Monitoring complet du système
-- Logging centralisé
-- Alerting configuré
+### Goals
+- Full system monitoring
+- Centralized logging
+- Alerting configured
 
 ### 5.1 Prometheus + Grafana
 
-#### 5.1.1 Métriques
-- 🟢 **Setup Prometheus** (1s)
-  - Configuration scraping
+#### 5.1.1 Metrics
+- 🟢 **Prometheus Setup** (1w)
+  - Scraping configuration
   - Service discovery
   - Retention policies
 
-- 🟢 **Dashboards Grafana** (2s)
-  - Métriques services
-  - Métriques base de données
-  - Métriques Ollama
-  - Métriques utilisateurs
+- 🟢 **Grafana Dashboards** (2w)
+  - Service metrics
+  - Database metrics
+  - Ollama metrics
+  - User metrics
 
-- 🟢 **Alerting** (1s)
-  - Alertes critiques
-  - Alertes performance
-  - Alertes sécurité
+- 🟢 **Alerting** (1w)
+  - Critical alerts
+  - Performance alerts
+  - Security alerts
 
 ### 5.2 Logging (Loki)
 
-#### 5.2.1 Centralisation Logs
-- 🟢 **Setup Loki + Promtail** (1s)
-  - Configuration collection
-  - Parsing logs structurés
+#### 5.2.1 Log Centralization
+- 🟢 **Loki + Promtail Setup** (1w)
+  - Collection configuration
+  - Structured log parsing
   - Retention
 
-- 🟢 **Dashboards Logs** (1s)
-  - Visualisation logs
-  - Recherche logs
-  - Filtres
+- 🟢 **Log Dashboards** (1w)
+  - Log visualization
+  - Log search
+  - Filters
 
 ### 5.3 Tracing (Jaeger)
 
-- 🟡 **Distributed Tracing** (1s)
+- 🟡 **Distributed Tracing** (1w)
   - OpenTelemetry setup
-  - Instrumentation services
-  - Visualisation traces
+  - Service instrumentation
+  - Trace visualization
 
 ### 5.4 Error Tracking
 
-- 🟡 **Sentry Self-Hosted** (1s)
+- 🟡 **Sentry Self-Hosted** (1w)
   - Configuration
-  - Intégration services
-  - Alertes erreurs
+  - Service integration
+  - Error alerts
 
-**Livrables Phase 5**:
-- ✅ Monitoring complet
-- ✅ Logging centralisé
-- ✅ Alerting configuré
-- ✅ Dashboards opérationnels
+**Phase 5 Deliverables**:
+- ✅ Full monitoring
+- ✅ Centralized logging
+- ✅ Alerting configured
+- ✅ Operational dashboards
 
 ---
 
-## Phase 6: Optimisation & Production (6-8 semaines)
+## Phase 6: Optimization & Production (6-8 weeks)
 
-### Objectifs
-- Optimisations performance
-- Préparation production
-- Documentation complète
+### Goals
+- Performance optimizations
+- Production readiness
+- Complete documentation
 
-### 6.1 Optimisations Performance
+### 6.1 Performance Optimization
 
 #### 6.1.1 Backend
-- 🟡 **Cache Strategy** (1s)
-  - Optimisation cache Redis
-  - Cache réponses IA
-  - Cache recherches
+- 🟡 **Cache Strategy** (1w)
+  - Redis cache optimization
+  - Cache AI responses
+  - Cache searches
 
-- 🟡 **Database Optimization** (1s)
-  - Indexes PostgreSQL
+- 🟡 **Database Optimization** (1w)
+  - PostgreSQL indexes
   - Query optimization
   - Connection pooling
 
-- 🟡 **LLM Optimization** (1s)
-  - Quantisation modèles
+- 🟡 **LLM Optimization** (1w)
+  - Model quantization
   - Batch processing
-  - Optimisation prompts
+  - Prompt optimization
 
 #### 6.1.2 Frontend
-- 🟡 **Performance** (1s)
+- 🟡 **Performance** (1w)
   - Code splitting
   - Lazy loading
   - Image optimization
   - Bundle size optimization
 
-### 6.2 Sécurité
+### 6.2 Security
 
 #### 6.2.1 Hardening
-- 🟢 **Security Audit** (1s)
+- 🟢 **Security Audit** (1w)
   - OWASP ZAP scanning
   - Dependency scanning
   - Configuration review
 
-- 🟢 **RGPD Compliance** (1s)
-  - FR-048: Protection données
-  - FR-022: Droit à l'oubli
+- 🟢 **GDPR Compliance** (1w)
+  - FR-048: Data protection
+  - FR-022: Right to be forgotten
   - Privacy policy
   - Data export
 
 ### 6.3 Documentation
 
-#### 6.3.1 Documentation Technique
-- 🟢 **API Documentation** (1s)
-  - OpenAPI complète
-  - Exemples requêtes
+#### 6.3.1 Technical Documentation
+- 🟢 **API Documentation** (1w)
+  - Complete OpenAPI
+  - Request examples
   - Postman collection
 
-- 🟢 **Guide Déploiement** (1s)
-  - Documentation self-hosted
+- 🟢 **Deployment Guide** (1w)
+  - Self-hosted documentation
   - Troubleshooting
   - Best practices
 
-#### 6.3.2 Documentation Utilisateur
-- 🟡 **User Guide** (1s)
-  - Guide utilisateur
+#### 6.3.2 User Documentation
+- 🟡 **User Guide** (1w)
+  - User guide
   - FAQ
   - Tutorials
 
-### 6.4 Tests & Qualité
+### 6.4 Tests & Quality
 
-#### 6.4.1 Tests Complets
-- 🟢 **Tests E2E** (1s)
-  - Scénarios utilisateur complets
-  - Tests performance
-  - Tests sécurité
+#### 6.4.1 Comprehensive Tests
+- 🟢 **E2E Tests** (1w)
+  - Full user scenarios
+  - Performance tests
+  - Security tests
 
-- 🟢 **Load Testing** (1s)
-  - Tests charge (k6)
-  - Optimisation basée résultats
+- 🟢 **Load Testing** (1w)
+  - Load tests (k6)
+  - Optimization based on results
   - Capacity planning
 
-### 6.5 Préparation Production
+### 6.5 Production Preparation
 
-#### 6.5.1 Infrastructure Production
-- 🟢 **Kubernetes Setup** (2s)
-  - Configurations K8s
+#### 6.5.1 Production Infrastructure
+- 🟢 **Kubernetes Setup** (2w)
+  - K8s configurations
   - Helm charts
   - Auto-scaling
 
-- 🟢 **Backup Strategy** (1s)
-  - Backup PostgreSQL
-  - Backup Weaviate
+- 🟢 **Backup Strategy** (1w)
+  - PostgreSQL backups
+  - Weaviate backups
   - Disaster recovery
 
-**Livrables Phase 6**:
-- ✅ Système optimisé
-- ✅ Sécurisé et conforme RGPD
-- ✅ Documentation complète
-- ✅ Prêt pour production
+**Phase 6 Deliverables**:
+- ✅ Optimized system
+- ✅ Secure and GDPR-compliant
+- ✅ Complete documentation
+- ✅ Production-ready
 
 ---
 
-## Phase 7: Améliorations Futures (Ongoing)
+## Phase 7: Future Improvements (Ongoing)
 
-### Objectifs
-- Améliorations continues
-- Nouvelles fonctionnalités
-- Optimisations basées sur feedback
+### Goals
+- Continuous improvements
+- New features
+- Optimizations based on feedback
 
-### 7.1 Fonctionnalités Avancées
+### 7.1 Advanced Features
 
-- 🔵 **Multi-langues** (4s)
-  - Support plusieurs langues
-  - Traduction automatique
-  - Localisation
+- 🔵 **Multi-language** (4w)
+  - Multi-language support
+  - Automatic translation
+  - Localization
 
-- 🔵 **Analytics Avancés** (2s)
-  - FR-051: Rapports détaillés
-  - Analytics utilisateurs
-  - Insights conversations
+- 🔵 **Advanced Analytics** (2w)
+  - FR-051: Detailed reports
+  - User analytics
+  - Conversation insights
 
-- 🔵 **Mobile App** (8s)
+- 🔵 **Mobile App** (8w)
   - React Native
-  - App iOS/Android
+  - iOS/Android app
   - Push notifications
 
-- 🔵 **SDK Public** (4s)
-  - SDK JavaScript/TypeScript
-  - Documentation développeurs
-  - Exemples intégration
+- 🔵 **Public SDK** (4w)
+  - JavaScript/TypeScript SDK
+  - Developer documentation
+  - Integration examples
 
-### 7.2 Optimisations IA
+### 7.2 AI Optimizations
 
-- 🔵 **Fine-tuning Modèles** (6s)
-  - Fine-tuning pour domaine bien-être
-  - Amélioration réponses
-  - Personnalisation
+- 🔵 **Model Fine-tuning** (6w)
+  - Fine-tuning for well-being domain
+  - Improved responses
+  - Personalization
 
-- 🔵 **RAG Avancé** (4s)
+- 🔵 **Advanced RAG** (4w)
   - Retrieval Augmented Generation
-  - Amélioration contexte
-  - Sources vérifiées
+  - Improved context
+  - Verified sources
 
 ### 7.3 Infrastructure
 
-- 🔵 **Multi-region** (6s)
-  - Déploiement multi-région
-  - Réplication données
-  - Latence optimisée
+- 🔵 **Multi-region** (6w)
+  - Multi-region deployment
+  - Data replication
+  - Optimized latency
 
-- 🔵 **Edge Computing** (4s)
+- 🔵 **Edge Computing** (4w)
   - Edge nodes
-  - Réduction latence
+  - Latency reduction
   - CDN integration
 
 ---
 
-## Timeline Global
+## Global Timeline
 
 ```
-Phase 0: Setup & Infrastructure          [Semaines 1-6]
-Phase 1: Services de Base                [Semaines 7-14]
-Phase 2: Services Conversation & IA      [Semaines 15-24]
-Phase 3: Services Vocaux                 [Semaines 25-32]
-Phase 4: Frontend                        [Semaines 33-42]
-Phase 5: Monitoring                      [Semaines 43-48]
-Phase 6: Optimisation & Production      [Semaines 49-56]
+Phase 0: Setup & Infrastructure          [Weeks 1-6]
+Phase 1: Core Services                   [Weeks 7-14]
+Phase 2: Conversation & AI Services      [Weeks 15-24]
+Phase 3: Voice Services                  [Weeks 25-32]
+Phase 4: Frontend                        [Weeks 33-42]
+Phase 5: Monitoring                      [Weeks 43-48]
+Phase 6: Optimization & Production       [Weeks 49-56]
 
-Total: ~14 mois (56 semaines)
+Total: ~14 months (56 weeks)
 ```
 
 ---
 
-## Dépendances Critiques
+## Critical Dependencies
 
 ### Phase 1 → Phase 2
-- Auth Service doit être fonctionnel avant Conversation Service
-- User Service doit être fonctionnel avant collecte croyances
+- Auth Service must be functional before Conversation Service
+- User Service must be functional before beliefs collection
 
 ### Phase 2 → Phase 4
-- Conversation Service et AI Service doivent être fonctionnels avant Frontend
-- Content Service doit être fonctionnel avant recommandations
+- Conversation Service and AI Service must be functional before Frontend
+- Content Service must be functional before recommendations
 
 ### Phase 3 → Phase 4
-- Voice Service doit être fonctionnel avant interface vocale
+- Voice Service must be functional before voice interface
 
 ### Phase 4 → Phase 5
-- Frontend doit être fonctionnel avant monitoring complet
+- Frontend must be functional before full monitoring
 
 ### Phase 5 → Phase 6
-- Monitoring doit être en place avant optimisations
+- Monitoring must be in place before optimizations
 
 ---
 
-## Métriques de Succès
+## Success Metrics
 
 ### Phase 1
-- ✅ 100% des APIs Auth/User fonctionnelles
-- ✅ 80% couverture tests
-- ✅ Temps réponse < 200ms (P95)
+- ✅ 100% of Auth/User APIs functional
+- ✅ 80% test coverage
+- ✅ Response time < 200ms (P95)
 
 ### Phase 2
-- ✅ 100% des APIs Conversation/AI/Content fonctionnelles
-- ✅ Intégration Ollama opérationnelle
-- ✅ Intégration Weaviate opérationnelle
-- ✅ 80% couverture tests
+- ✅ 100% of Conversation/AI/Content APIs functional
+- ✅ Ollama integration operational
+- ✅ Weaviate integration operational
+- ✅ 80% test coverage
 
 ### Phase 3
-- ✅ 100% des APIs Voice fonctionnelles
-- ✅ TTS et STT opérationnels
-- ✅ API Gateway configuré
+- ✅ 100% of Voice APIs functional
+- ✅ TTS and STT operational
+- ✅ API Gateway configured
 
 ### Phase 4
-- ✅ Toutes pages fonctionnelles
-- ✅ Responsive sur mobile/tablette/desktop
-- ✅ Tests E2E passants
-- ✅ Accessibilité WCAG 2.1 AA
+- ✅ All pages functional
+- ✅ Responsive on mobile/tablet/desktop
+- ✅ E2E tests passing
+- ✅ WCAG 2.1 AA accessibility
 
 ### Phase 5
-- ✅ Monitoring complet opérationnel
-- ✅ Alerting configuré
-- ✅ Dashboards fonctionnels
+- ✅ Full monitoring operational
+- ✅ Alerting configured
+- ✅ Dashboards functional
 
 ### Phase 6
-- ✅ Performance optimisée (P95 < 2s)
-- ✅ Sécurité validée
-- ✅ Documentation complète
-- ✅ Prêt production
+- ✅ Performance optimized (P95 < 2s)
+- ✅ Security validated
+- ✅ Complete documentation
+- ✅ Production-ready
 
 ---
 
-## Risques & Mitigation
+## Risks & Mitigation
 
-### Risques Techniques
+### Technical Risks
 
-**Risque**: Performance Ollama insuffisante
-- **Mitigation**: Optimisation modèles, quantisation, GPU requis
+**Risk**: Insufficient Ollama performance
+- **Mitigation**: Model optimization, quantization, GPU required
 
-**Risque**: Complexité déploiement self-hosted
-- **Mitigation**: Documentation détaillée, scripts automatisation
+**Risk**: Self-hosted deployment complexity
+- **Mitigation**: Detailed documentation, automation scripts
 
-**Risque**: Qualité TTS/STT open source
-- **Mitigation**: Tests comparatifs, alternatives (Piper TTS)
+**Risk**: Open source TTS/STT quality
+- **Mitigation**: Comparative testing, alternatives (Piper TTS)
 
-### Risques Projet
+### Project Risks
 
-**Risque**: Délais dépassés
-- **Mitigation**: Priorisation MVP, itérations courtes
+**Risk**: Schedule overruns
+- **Mitigation**: MVP prioritization, short iterations
 
-**Risque**: Changements requirements
-- **Mitigation**: Architecture flexible, documentation ADR
+**Risk**: Requirements changes
+- **Mitigation**: Flexible architecture, ADR documentation
 
 ---
 
-## Ressources Nécessaires
+## Required Resources
 
-### Équipe
+### Team
 - **2-3 Backend Developers** (Node.js, TypeScript)
 - **1-2 Frontend Developers** (React, TypeScript)
 - **1 DevOps Engineer** (Docker, Kubernetes, Monitoring)
-- **1 QA Engineer** (Tests, Qualité)
+- **1 QA Engineer** (Tests, Quality)
 
 ### Infrastructure
-- **Développement**: Machines locales + Docker
-- **Staging**: Serveur dédié (16 cores, 64GB RAM, GPU)
-- **Production**: Infrastructure scalable (Kubernetes)
+- **Development**: Local machines + Docker
+- **Staging**: Dedicated server (16 cores, 64GB RAM, GPU)
+- **Production**: Scalable infrastructure (Kubernetes)
 
 ---
 
 ## Conclusion
 
-Ce roadmap fournit une feuille de route complète pour développer Serein Open Source. Les phases sont conçues pour être itératives, avec des livrables fonctionnels à chaque étape.
+This roadmap provides a comprehensive plan to develop Serein Open Source. The phases are designed to be iterative, with functional deliverables at each step.
 
-**Prochaines Étapes**:
-1. Valider le roadmap avec l'équipe
-2. Démarrer Phase 0 (Setup & Infrastructure)
-3. Mettre en place tracking des tâches
-4. Commencer développement itératif
+**Next Steps**:
+1. Validate the roadmap with the team
+2. Start Phase 0 (Setup & Infrastructure)
+3. Set up task tracking
+4. Begin iterative development
 
 ---
 
-**Note**: Ce roadmap est un document vivant et sera mis à jour régulièrement selon l'évolution du projet et les retours.
+**Note**: This roadmap is a living document and will be updated regularly as the project evolves and feedback arrives.

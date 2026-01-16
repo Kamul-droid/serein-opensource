@@ -1,23 +1,23 @@
-# Architecture Système Open Source - Serein
+# Open Source System Architecture - Serein
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
 ---
 
-## 1. Vue d'Ensemble
+## 1. Overview
 
-Cette architecture utilise **uniquement des technologies open source** pour permettre un déploiement self-hosted complet.
+This architecture uses **only open source technologies** to enable a fully self-hosted deployment.
 
-### 1.1 Principes Architecturaux
+### 1.1 Architectural Principles
 
-- **Microservices**: Architecture modulaire avec services indépendants
-- **Open Source First**: Toutes les technologies sont open source
-- **Self-Hosted**: Déploiement possible sur votre propre infrastructure
-- **Cost-Effective**: Pas de coûts de services cloud propriétaires
-- **Security by Design**: Sécurité intégrée, code auditable
+- **Microservices**: Modular architecture with independent services
+- **Open Source First**: All technologies are open source
+- **Self-Hosted**: Deployment on your own infrastructure
+- **Cost-Effective**: No proprietary cloud service costs
+- **Security by Design**: Built-in security, auditable code
 
-### 1.2 Diagramme de Haut Niveau
+### 1.2 High-Level Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -84,83 +84,83 @@ Cette architecture utilise **uniquement des technologies open source** pour perm
 
 ---
 
-## 2. Services Backend (Open Source)
+## 2. Backend Services (Open Source)
 
 ### 2.1 Auth Service
 
-**Technologies**: Node.js, Express, JWT, bcrypt
-**Base de données**: PostgreSQL
-**APIs**: Identiques à la version standard
+**Technologies**: Node.js, Express, JWT, bcrypt  
+**Database**: PostgreSQL  
+**APIs**: Same as the standard version
 
 ### 2.2 User Service
 
-**Technologies**: Node.js, Express, Prisma
-**Base de données**: PostgreSQL
-**APIs**: Identiques à la version standard
+**Technologies**: Node.js, Express, Prisma  
+**Database**: PostgreSQL  
+**APIs**: Same as the standard version
 
 ### 2.3 Conversation Service
 
-**Technologies**: Node.js, Express, Prisma
-**Base de données**: PostgreSQL
-**APIs**: Identiques à la version standard
+**Technologies**: Node.js, Express, Prisma  
+**Database**: PostgreSQL  
+**APIs**: Same as the standard version
 
 ### 2.4 AI Service (Open Source)
 
-**Technologies**: Node.js, Express
-**LLM Provider**: Ollama (local ou serveur dédié)
-**Modèles supportés**:
+**Technologies**: Node.js, Express  
+**LLM Provider**: Ollama (local or dedicated server)  
+**Supported models**:
 - Llama 2/3 (Meta)
 - Mistral (Mistral AI)
 - Phi (Microsoft)
 - CodeLlama (Meta)
 
-**Logique de Sélection**:
-1. Évaluer la complexité de la question
-2. Utiliser un modèle léger pour questions simples (Phi, Mistral 7B)
-3. Utiliser un modèle plus puissant pour questions complexes (Llama 70B, Mistral Large)
-4. Pas de coût par token (gratuit)
+**Selection Logic**:
+1. Evaluate question complexity
+2. Use a lightweight model for simple questions (Phi, Mistral 7B)
+3. Use a stronger model for complex questions (Llama 70B, Mistral Large)
+4. No per-token cost (free)
 
 **APIs**:
-- `POST /ai/chat` - Chat avec l'agent IA
-- `POST /ai/chat/stream` - Chat en streaming
-- `GET /ai/models` - Liste des modèles disponibles (Ollama)
+- `POST /ai/chat` - Chat with the AI agent
+- `POST /ai/chat/stream` - Streaming chat
+- `GET /ai/models` - List available models (Ollama)
 
 ### 2.5 Content Service
 
-**Technologies**: Node.js, Express
-**Vector Database**: Weaviate (open source, self-hosted)
-**Base de données**: PostgreSQL
+**Technologies**: Node.js, Express  
+**Vector Database**: Weaviate (open source, self-hosted)  
+**Database**: PostgreSQL
 
 **APIs**:
-- `POST /content/search` - Rechercher des ouvrages (recherche sémantique via Weaviate)
-- `GET /content/books` - Liste des livres disponibles
-- `GET /content/books/:id` - Détails d'un livre
-- `POST /content/recommendations` - Recommandations basées sur les croyances
+- `POST /content/search` - Search for books (semantic search via Weaviate)
+- `GET /content/books` - List available books
+- `GET /content/books/:id` - Book details
+- `POST /content/recommendations` - Recommendations based on beliefs
 
 ### 2.6 Voice Service (Open Source)
 
-**Technologies**: Node.js, Express
-**TTS**: Coqui TTS ou Piper TTS
-**STT**: Whisper (via API REST)
+**Technologies**: Node.js, Express  
+**TTS**: Coqui TTS or Piper TTS  
+**STT**: Whisper (via REST API)
 
 **APIs**:
-- `POST /voice/synthesize` - Synthèse vocale (Coqui TTS)
-- `POST /voice/transcribe` - Transcription vocale (Whisper)
-- `GET /voice/voices` - Liste des voix disponibles
+- `POST /voice/synthesize` - Voice synthesis (Coqui TTS)
+- `POST /voice/transcribe` - Voice transcription (Whisper)
+- `GET /voice/voices` - List available voices
 
-**Déploiement**:
-- Coqui TTS: Service Python avec API REST
-- Whisper: Service Python avec API REST (faster-whisper)
+**Deployment**:
+- Coqui TTS: Python service with REST API
+- Whisper: Python service with REST API (faster-whisper)
 
 ---
 
-## 3. Infrastructure Open Source
+## 3. Open Source Infrastructure
 
 ### 3.1 API Gateway
 
-**Nginx** ou **Traefik**
-- Routage vers services backend
-- Authentification centralisée
+**Nginx** or **Traefik**
+- Routing to backend services
+- Centralized authentication
 - Rate limiting
 - Load balancing
 - SSL/TLS termination
@@ -168,104 +168,104 @@ Cette architecture utilise **uniquement des technologies open source** pour perm
 ### 3.2 Container Orchestration
 
 **Kubernetes** (open source)
-- Orchestration des services
+- Service orchestration
 - Auto-scaling
 - Service discovery
 - Health checks
 
-**Alternative**: Docker Compose (pour développement)
+**Alternative**: Docker Compose (for development)
 
 ### 3.3 Monitoring Stack
 
 **Prometheus**
-- Collecte de métriques
+- Metrics collection
 - Alerting
 - Time-series database
 
 **Grafana**
-- Visualisation des métriques
+- Metrics visualization
 - Dashboards
 - Alerting
 
 **Loki + Promtail**
-- Collecte de logs
-- Centralisation
-- Requêtes similaires à Prometheus
+- Log collection
+- Centralization
+- Prometheus-like queries
 
 **Jaeger**
 - Distributed tracing
-- Compatible OpenTelemetry
+- OpenTelemetry compatible
 
 ---
 
-## 4. Base de Données Open Source
+## 4. Open Source Databases
 
 ### 4.1 PostgreSQL
 
-**Utilisation**: Base de données principale
-**Version**: 15+
+**Usage**: Primary database  
+**Version**: 15+  
 **ORM**: Prisma (open source)
 
 ### 4.2 Redis
 
-**Utilisation**: Cache, sessions, rate limiting
+**Usage**: Cache, sessions, rate limiting  
 **Version**: 7.0+
 
 ### 4.3 Weaviate
 
-**Utilisation**: Base de données vectorielle pour recherche sémantique
-**Déploiement**: Self-hosted
+**Usage**: Vector database for semantic search  
+**Deployment**: Self-hosted  
 **Alternatives**: Qdrant, Milvus
 
 ---
 
-## 5. Services IA Open Source
+## 5. Open Source AI Services
 
 ### 5.1 Ollama (LLM)
 
-**Déploiement**:
-- Local sur serveur dédié
+**Deployment**:
+- Local on a dedicated server
 - Via Docker
-- API REST compatible OpenAI
+- OpenAI-compatible REST API
 
-**Modèles**:
-- **Léger**: Phi-2, Mistral 7B
-- **Moyen**: Llama 2 13B, Mistral Medium
-- **Puissant**: Llama 2 70B, Mistral Large
+**Models**:
+- **Lightweight**: Phi-2, Mistral 7B
+- **Medium**: Llama 2 13B, Mistral Medium
+- **Powerful**: Llama 2 70B, Mistral Large
 
 **Performance**:
-- GPU recommandé pour modèles > 7B
-- CPU possible pour modèles < 7B
+- GPU recommended for models > 7B
+- CPU possible for models < 7B
 
 ### 5.2 Coqui TTS
 
-**Déploiement**:
-- Service Python avec API REST
+**Deployment**:
+- Python service with REST API
 - Via Docker
-- Support de multiples voix
+- Multiple voice support
 
 **Alternatives**:
-- Piper TTS (plus léger)
+- Piper TTS (lighter)
 - Mozilla TTS
 
 ### 5.3 Whisper
 
-**Déploiement**:
-- Service Python avec API REST
+**Deployment**:
+- Python service with REST API
 - Via Docker
-- faster-whisper pour performance
+- faster-whisper for performance
 
-**Modèles**:
+**Models**:
 - tiny, base, small, medium, large
-- Support multi-langues
+- Multi-language support
 
 ---
 
-## 6. Différences avec la Version Standard
+## 6. Differences vs Standard Version
 
-### 6.1 Services IA
+### 6.1 AI Services
 
-| Composant | Standard | Open Source |
+| Component | Standard | Open Source |
 |-----------|----------|-------------|
 | LLM | OpenAI/Anthropic (cloud) | Ollama (local) |
 | TTS | ElevenLabs (cloud) | Coqui TTS (local) |
@@ -274,35 +274,35 @@ Cette architecture utilise **uniquement des technologies open source** pour perm
 
 ### 6.2 Infrastructure
 
-| Composant | Standard | Open Source |
+| Component | Standard | Open Source |
 |-----------|----------|-------------|
 | API Gateway | Kong Cloud | Nginx/Traefik |
 | Monitoring | Datadog | Prometheus + Grafana |
 | Logging | Datadog | Loki |
 | Error Tracking | Sentry Cloud | Sentry Self-hosted |
 
-### 6.3 Coûts
+### 6.3 Costs
 
 | Type | Standard | Open Source |
 |------|----------|-------------|
-| Services IA | $500-2000/mois | $0 (local) |
-| Infrastructure | $100-500/mois | $50-200/mois (serveurs) |
-| **Total** | **$600-2500/mois** | **$50-200/mois** |
+| AI Services | $500-2000/month | $0 (local) |
+| Infrastructure | $100-500/month | $50-200/month (servers) |
+| **Total** | **$600-2500/month** | **$50-200/month** |
 
 ---
 
-## 7. Déploiement Self-Hosted
+## 7. Self-Hosted Deployment
 
-### 7.1 Architecture Self-Hosted
+### 7.1 Self-Hosted Architecture
 
 ```
 ┌─────────────────────────────────────────┐
-│      Votre Serveur / Infrastructure     │
+│      Your Server / Infrastructure       │
 │                                         │
 │  ┌──────────────────────────────────┐  │
 │  │     Kubernetes / Docker Compose  │  │
 │  │                                   │  │
-│  │  Services Backend (Node.js)       │  │
+│  │  Backend Services (Node.js)       │  │
 │  │  Frontend (React)                 │  │
 │  │  PostgreSQL                       │  │
 │  │  Redis                            │  │
@@ -316,53 +316,53 @@ Cette architecture utilise **uniquement des technologies open source** pour perm
 └─────────────────────────────────────────┘
 ```
 
-### 7.2 Exigences Système
+### 7.2 System Requirements
 
 **Minimum**:
 - CPU: 8 cores
 - RAM: 32 GB
 - Storage: 500 GB SSD
-- GPU: Optionnel (recommandé pour LLM)
+- GPU: Optional (recommended for LLM)
 
-**Recommandé**:
+**Recommended**:
 - CPU: 16+ cores
 - RAM: 64+ GB
 - Storage: 1 TB+ SSD
-- GPU: NVIDIA avec 16+ GB VRAM
+- GPU: NVIDIA with 16+ GB VRAM
 
 ---
 
-## 8. Avantages de l'Architecture Open Source
+## 8. Benefits of the Open Source Architecture
 
-### 8.1 Coûts
-- ✅ Pas de coûts de services cloud
-- ✅ Coûts limités à l'infrastructure
-- ✅ Pas de coûts par token/requête
+### 8.1 Costs
+- ✅ No cloud service costs
+- ✅ Costs limited to infrastructure
+- ✅ No per-token/request costs
 
-### 8.2 Contrôle
-- ✅ Contrôle total sur les données
-- ✅ Pas de vendor lock-in
-- ✅ Déploiement où vous voulez
+### 8.2 Control
+- ✅ Full control over data
+- ✅ No vendor lock-in
+- ✅ Deploy anywhere
 
-### 8.3 Sécurité
-- ✅ Code source auditable
-- ✅ Pas de dépendance à services externes
-- ✅ Conformité RGPD facilitée
+### 8.3 Security
+- ✅ Auditable source code
+- ✅ No dependency on external services
+- ✅ Easier GDPR compliance
 
-### 8.4 Flexibilité
-- ✅ Personnalisation complète
-- ✅ Pas de limitations de rate
-- ✅ Intégration facile
+### 8.4 Flexibility
+- ✅ Full customization
+- ✅ No rate limits
+- ✅ Easy integration
 
 ---
 
 ## 9. Conclusion
 
-Cette architecture open source permet de :
-- ✅ Réduire les coûts drastiquement
-- ✅ Maintenir le contrôle total
-- ✅ Déployer en self-hosted
-- ✅ Utiliser des technologies de qualité professionnelle
-- ✅ Éviter le vendor lock-in
+This open source architecture enables you to:
+- ✅ Drastically reduce costs
+- ✅ Maintain full control
+- ✅ Deploy self-hosted
+- ✅ Use professional-grade technologies
+- ✅ Avoid vendor lock-in
 
-L'architecture est conçue pour être aussi performante que la version standard, tout en étant entièrement open source et self-hostable.
+The architecture is designed to be as performant as the standard version while being fully open source and self-hostable.

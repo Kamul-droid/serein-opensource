@@ -1,19 +1,19 @@
 # Shared Package
 
-Package partagé contenant les types, utilitaires et helpers communs à tous les services.
+Shared package containing the types, utilities, and helpers used across all services.
 
 ## Structure
 
 ```
 shared/
-├── types/          # Types TypeScript partagés
-├── utils/          # Utilitaires partagés (logger, errors, etc.)
-└── index.ts        # Exports principaux
+├── types/          # Shared TypeScript types
+├── utils/          # Shared utilities (logger, errors, etc.)
+└── index.ts        # Main exports
 ```
 
-## Utilisation
+## Usage
 
-Dans un service, importez depuis `@serein/shared` :
+In a service, import from `@serein/shared`:
 
 ```typescript
 import { User, Conversation } from '@serein/shared/types';
@@ -27,7 +27,7 @@ import { AppError, NotFoundError } from '@serein/shared/utils/errors';
 npm run build
 ```
 
-## Développement
+## Development
 
 ```bash
 npm run dev  # Watch mode

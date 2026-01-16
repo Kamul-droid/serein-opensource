@@ -1,143 +1,143 @@
-# Architecture Système - Plateforme IA de Bien-être
+# System Architecture - AI Well-being Platform
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
 ---
 
-## 1. Vue d'Ensemble
+## 1. Overview
 
-Ce document décrit l'architecture de base commune à toutes les versions de Serein. Pour l'architecture spécifique à la version open source, voir [Architecture Système Open Source](../architecture/system-architecture.md).
+This document describes the base architecture shared across all versions of Serein. For the open source-specific architecture, see [Open Source System Architecture](../architecture/system-architecture.md).
 
-### 1.1 Principes Architecturaux
+### 1.1 Architectural Principles
 
-- **Microservices**: Architecture modulaire avec services indépendants
-- **API-First**: Toutes les fonctionnalités exposées via des APIs REST/GraphQL
-- **Event-Driven**: Communication asynchrone entre services via événements
-- **Security by Design**: Sécurité intégrée à tous les niveaux
-- **Self-Contained**: Chaque version est autonome
+- **Microservices**: Modular architecture with independent services
+- **API-First**: All features exposed via REST/GraphQL APIs
+- **Event-Driven**: Asynchronous communication between services via events
+- **Security by Design**: Security built in at every level
+- **Self-Contained**: Each version is autonomous
 
 ---
 
-## 2. Services Backend (Communs)
+## 2. Backend Services (Common)
 
 ### 2.1 Auth Service
 
-**Responsabilités**:
-- Authentification des utilisateurs
-- Gestion des tokens JWT
-- Gestion des sessions
-- Récupération de mot de passe
+**Responsibilities**:
+- User authentication
+- JWT token management
+- Session management
+- Password recovery
 
 **APIs**:
-- `POST /auth/register` - Inscription
-- `POST /auth/login` - Connexion
-- `POST /auth/logout` - Déconnexion
-- `POST /auth/refresh` - Renouvellement de token
-- `POST /auth/forgot-password` - Récupération de mot de passe
+- `POST /auth/register` - Registration
+- `POST /auth/login` - Login
+- `POST /auth/logout` - Logout
+- `POST /auth/refresh` - Token refresh
+- `POST /auth/forgot-password` - Password recovery
 
-**Base de données**: PostgreSQL (table `users`, `sessions`)
+**Database**: PostgreSQL (tables `users`, `sessions`)
 
 ---
 
 ### 2.2 User Service
 
-**Responsabilités**:
-- Gestion des profils utilisateur
-- Gestion des préférences utilisateur
-- Gestion des croyances et centres d'intérêt
+**Responsibilities**:
+- User profile management
+- User preferences management
+- Beliefs and interests management
 
 **APIs**:
-- `GET /users/me` - Profil utilisateur actuel
-- `PUT /users/me` - Mise à jour du profil
-- `GET /users/me/preferences` - Préférences utilisateur
-- `PUT /users/me/preferences` - Mise à jour des préférences
-- `GET /users/me/beliefs` - Croyances de l'utilisateur
-- `PUT /users/me/beliefs` - Mise à jour des croyances
+- `GET /users/me` - Current user profile
+- `PUT /users/me` - Update profile
+- `GET /users/me/preferences` - User preferences
+- `PUT /users/me/preferences` - Update preferences
+- `GET /users/me/beliefs` - User beliefs
+- `PUT /users/me/beliefs` - Update beliefs
 
-**Base de données**: PostgreSQL (table `user_profiles`, `user_preferences`, `user_beliefs`)
+**Database**: PostgreSQL (tables `user_profiles`, `user_preferences`, `user_beliefs`)
 
 ---
 
 ### 2.3 Conversation Service
 
-**Responsabilités**:
-- Gestion des conversations
-- Stockage de l'historique
-- Gestion du contexte de conversation
-- Orchestration des appels IA
+**Responsibilities**:
+- Conversation management
+- History storage
+- Conversation context management
+- AI call orchestration
 
 **APIs**:
-- `POST /conversations` - Créer une nouvelle conversation
-- `GET /conversations` - Liste des conversations
-- `GET /conversations/:id` - Détails d'une conversation
-- `POST /conversations/:id/messages` - Envoyer un message
-- `GET /conversations/:id/messages` - Historique des messages
-- `DELETE /conversations/:id` - Supprimer une conversation
-- `WebSocket /conversations/:id/stream` - Stream de conversation en temps réel
+- `POST /conversations` - Create a new conversation
+- `GET /conversations` - List conversations
+- `GET /conversations/:id` - Conversation details
+- `POST /conversations/:id/messages` - Send a message
+- `GET /conversations/:id/messages` - Message history
+- `DELETE /conversations/:id` - Delete a conversation
+- `WebSocket /conversations/:id/stream` - Real-time conversation stream
 
-**Base de données**: PostgreSQL (table `conversations`, `messages`)
+**Database**: PostgreSQL (tables `conversations`, `messages`)
 
 ---
 
 ### 2.4 AI Service
 
-**Responsabilités**:
-- Orchestration des modèles IA
-- Sélection du modèle approprié (performance/complexité)
-- Gestion du contexte de conversation
-- Application des limites de domaine (bien-être uniquement)
-- Gestion des réponses "je ne sais pas"
+**Responsibilities**:
+- AI model orchestration
+- Appropriate model selection (performance/complexity)
+- Conversation context management
+- Domain limits (well-being only)
+- "I don't know" response handling
 
 **APIs**:
-- `POST /ai/chat` - Chat avec l'agent IA
-- `POST /ai/chat/stream` - Chat en streaming
-- `GET /ai/models` - Liste des modèles disponibles
+- `POST /ai/chat` - Chat with the AI agent
+- `POST /ai/chat/stream` - Streaming chat
+- `GET /ai/models` - List available models
 
-**Note**: L'implémentation diffère selon la version (services cloud vs open source).
+**Note**: Implementation differs by version (cloud services vs open source).
 
 ---
 
 ### 2.5 Content Service
 
-**Responsabilités**:
-- Recherche d'ouvrages de référence
-- Gestion de la base de connaissances
-- Recherche sémantique dans les contenus
+**Responsibilities**:
+- Reference book search
+- Knowledge base management
+- Semantic content search
 
 **APIs**:
-- `POST /content/search` - Rechercher des ouvrages
-- `GET /content/books` - Liste des livres disponibles
-- `GET /content/books/:id` - Détails d'un livre
-- `POST /content/recommendations` - Recommandations basées sur les croyances
+- `POST /content/search` - Search for books
+- `GET /content/books` - List available books
+- `GET /content/books/:id` - Book details
+- `POST /content/recommendations` - Recommendations based on beliefs
 
-**Base de données**: 
-- PostgreSQL (table `books`, `book_categories`)
-- Vector DB pour la recherche sémantique
+**Database**:
+- PostgreSQL (tables `books`, `book_categories`)
+- Vector DB for semantic search
 
 ---
 
 ### 2.6 Voice Service
 
-**Responsabilités**:
-- Gestion de la synthèse vocale (TTS)
-- Gestion de la reconnaissance vocale (STT)
-- Gestion des préférences de voix
+**Responsibilities**:
+- Speech synthesis (TTS)
+- Speech recognition (STT)
+- Voice preference management
 
 **APIs**:
-- `POST /voice/synthesize` - Synthèse vocale
-- `POST /voice/transcribe` - Transcription vocale
-- `GET /voice/voices` - Liste des voix disponibles
+- `POST /voice/synthesize` - Speech synthesis
+- `POST /voice/transcribe` - Speech transcription
+- `GET /voice/voices` - List available voices
 
-**Note**: L'implémentation diffère selon la version (services cloud vs open source).
+**Note**: Implementation differs by version (cloud services vs open source).
 
 ---
 
-## 3. Base de Données
+## 3. Databases
 
-### 3.1 PostgreSQL (Base de Données Principale)
+### 3.1 PostgreSQL (Primary Database)
 
-**Schéma Principal**:
+**Main Schema**:
 
 ```sql
 -- Users
@@ -160,123 +160,123 @@ ai_requests (id, user_id, conversation_id, model_used, resource_usage, created_a
 
 ### 3.2 Redis (Cache)
 
-**Utilisations**:
-- Cache des sessions utilisateur
-- Cache des réponses IA fréquentes
-- Cache des résultats de recherche
+**Uses**:
+- User session cache
+- Cache frequent AI responses
+- Cache search results
 - Rate limiting
 
-### 3.3 Vector Database (Recherche Sémantique)
+### 3.3 Vector Database (Semantic Search)
 
-**Technologies** (selon version):
-- **Version Standard**: Pinecone (cloud)
-- **Version Open Source**: Weaviate / Qdrant (self-hosted)
+**Technologies** (by version):
+- **Standard Version**: Pinecone (cloud)
+- **Open Source Version**: Weaviate / Qdrant (self-hosted)
 
-**Utilisations**:
-- Recherche sémantique dans les livres
-- Recherche de contenu similaire
-- Embeddings des conversations
+**Uses**:
+- Semantic search across books
+- Similar content search
+- Conversation embeddings
 
 ---
 
-## 4. Patterns Architecturaux
+## 4. Architectural Patterns
 
 ### 4.1 Repository Pattern
-- Abstraction de l'accès aux données
-- Facilite les tests et le changement de base de données
+- Data access abstraction
+- Easier testing and database changes
 
 ### 4.2 Service Layer Pattern
-- Logique métier dans les services
-- Controllers minces, services épais
+- Business logic in services
+- Thin controllers, fat services
 
 ### 4.3 Event-Driven Architecture
-- Communication asynchrone entre services
-- Découplage des services
+- Async communication between services
+- Service decoupling
 
 ### 4.4 Circuit Breaker Pattern
-- Protection contre les pannes en cascade
-- Fallback pour les services externes
+- Protection against cascading failures
+- Fallback for external services
 
 ### 4.5 Retry Pattern
-- Retry avec backoff exponentiel
-- Pour les appels API externes
+- Retry with exponential backoff
+- For external API calls
 
 ---
 
-## 5. Sécurité
+## 5. Security
 
-### 5.1 Authentification et Autorisation
-- JWT avec expiration courte (15 min)
-- Refresh tokens avec expiration longue (7 jours)
-- RBAC pour les rôles utilisateur
+### 5.1 Authentication and Authorization
+- JWT with short expiration (15 min)
+- Refresh tokens with long expiration (7 days)
+- RBAC for user roles
 
-### 5.2 Protection des Données
-- Chiffrement en transit (TLS 1.3)
-- Chiffrement au repos (AES-256)
-- Hashage des mots de passe (bcrypt/Argon2)
+### 5.2 Data Protection
+- Encryption in transit (TLS 1.3)
+- Encryption at rest (AES-256)
+- Password hashing (bcrypt/Argon2)
 
-### 5.3 Sécurité des APIs
-- Rate limiting par utilisateur/IP
-- Validation et sanitization des entrées
-- Protection CSRF et XSS
+### 5.3 API Security
+- Rate limiting per user/IP
+- Input validation and sanitization
+- CSRF and XSS protection
 
 ---
 
-## 6. Scalabilité
+## 6. Scalability
 
-### 6.1 Scalabilité Horizontale
-- Services stateless
+### 6.1 Horizontal Scalability
+- Stateless services
 - Load balancing
-- Base de données avec réplication
+- Database replication
 
-### 6.2 Optimisation
-- Cache Redis pour les données fréquentes
-- CDN pour les assets statiques
-- Compression des réponses API
+### 6.2 Optimization
+- Redis cache for frequent data
+- CDN for static assets
+- API response compression
 
 ---
 
-## 7. Monitoring et Observabilité
+## 7. Monitoring and Observability
 
 ### 7.1 Logging
 - Structured logging (JSON)
-- Centralisé (ELK Stack, Loki)
-- Niveaux: DEBUG, INFO, WARN, ERROR
+- Centralized (ELK Stack, Loki)
+- Levels: DEBUG, INFO, WARN, ERROR
 
-### 7.2 Métriques
-- Temps de réponse
-- Taux d'erreur
-- Utilisation des ressources
-- Utilisation des modèles IA
+### 7.2 Metrics
+- Response times
+- Error rate
+- Resource usage
+- AI model usage
 
 ### 7.3 Tracing
 - Distributed tracing (Jaeger, Zipkin)
-- Correlation IDs pour les requêtes
+- Correlation IDs for requests
 
 ### 7.4 Alerting
-- Alertes pour erreurs critiques
-- Alertes pour dépassement de seuils
-- Alertes pour problèmes de sécurité
+- Alerts for critical errors
+- Alerts for threshold breaches
+- Alerts for security issues
 
 ---
 
-## 8. Déploiement
+## 8. Deployment
 
 ### 8.1 Infrastructure
 - **Containers**: Docker
-- **Orchestration**: Kubernetes ou Docker Compose (dev)
-- **CI/CD**: GitHub Actions, GitLab CI, ou Jenkins
+- **Orchestration**: Kubernetes or Docker Compose (dev)
+- **CI/CD**: GitHub Actions, GitLab CI, or Jenkins
 
-### 8.2 Environnements
-- **Development**: Local avec Docker Compose
-- **Staging**: Environnement de test
-- **Production**: Environnement de production avec haute disponibilité
+### 8.2 Environments
+- **Development**: Local with Docker Compose
+- **Staging**: Test environment
+- **Production**: Production environment with high availability
 
 ---
 
-## 9. Intégration
+## 9. Integration
 
-### 9.1 SDK JavaScript/TypeScript
+### 9.1 JavaScript/TypeScript SDK
 
 ```typescript
 import { SereinClient } from '@serein/sdk';
@@ -289,7 +289,7 @@ const client = new SereinClient({
 // Conversation
 const conversation = await client.conversations.create();
 const response = await client.conversations.sendMessage(conversation.id, {
-  message: 'Bonjour',
+  message: 'Hello',
   mode: 'text'
 });
 ```
@@ -309,6 +309,6 @@ import { SereinChat } from '@serein/react';
 
 ---
 
-**Note**: Cette architecture de base est commune aux deux versions. Pour les détails spécifiques à chaque version, voir :
-- [Architecture Open Source](../architecture/system-architecture.md) - Version open source
-- [Architecture Standard](../../../serein-standard/docs/architecture/system-architecture.md) - Version standard
+**Note**: This base architecture is shared across both versions. For version-specific details, see:
+- [Open Source Architecture](../architecture/system-architecture.md) - Open source version
+- [Standard Architecture](../../../serein-standard/docs/architecture/system-architecture.md) - Standard version

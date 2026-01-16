@@ -1,21 +1,21 @@
-# Stratégie de Tests - Plateforme IA de Bien-être
+# Test Strategy - AI Well-being Platform
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
 ---
 
-## 1. Vue d'Ensemble
+## 1. Overview
 
-### 1.1 Objectifs des Tests
+### 1.1 Testing Goals
 
-- **Qualité**: Assurer la qualité du code et des fonctionnalités
-- **Fiabilité**: Garantir la stabilité du système
-- **Sécurité**: Vérifier la sécurité des données et des APIs
-- **Performance**: Valider les performances et la scalabilité
-- **Maintenabilité**: Faciliter la maintenance et l'évolution
+- **Quality**: Ensure code and feature quality
+- **Reliability**: Guarantee system stability
+- **Security**: Verify data and API security
+- **Performance**: Validate performance and scalability
+- **Maintainability**: Support maintenance and evolution
 
-### 1.2 Pyramide de Tests
+### 1.2 Test Pyramid
 
 ```
                     /\
@@ -30,52 +30,52 @@
            /----------------------\
 ```
 
-- **Unit Tests (70%)**: Tests unitaires rapides et isolés
-- **Integration Tests (20%)**: Tests d'intégration entre composants
-- **E2E Tests (10%)**: Tests end-to-end des scénarios utilisateur
+- **Unit Tests (70%)**: Fast, isolated tests
+- **Integration Tests (20%)**: Tests across components
+- **E2E Tests (10%)**: End-to-end user scenarios
 
 ---
 
-## 2. Tests Unitaires
+## 2. Unit Tests
 
-### 2.1 Portée
+### 2.1 Scope
 
-**Services Backend**:
-- Logique métier
-- Validation des données
-- Transformation des données
-- Calculs et algorithmes
+**Backend Services**:
+- Business logic
+- Data validation
+- Data transformation
+- Calculations and algorithms
 
-**Composants Frontend**:
-- Composants React isolés
-- Hooks personnalisés
-- Utilitaires et helpers
-- Gestion d'état
+**Frontend Components**:
+- Isolated React components
+- Custom hooks
+- Utilities and helpers
+- State management
 
 **SDK**:
-- Clients API
-- Transformation des requêtes/réponses
-- Gestion des erreurs
+- API clients
+- Request/response transformations
+- Error handling
 
-### 2.2 Outils
+### 2.2 Tools
 
 **Backend (Node.js/TypeScript)**:
-- **Jest**: Framework de test principal
-- **Sinon**: Mocks et stubs
-- **Supertest**: Tests d'API HTTP
+- **Jest**: Primary test framework
+- **Sinon**: Mocks and stubs
+- **Supertest**: HTTP API tests
 
 **Frontend (React)**:
-- **Jest**: Framework de test
-- **React Testing Library**: Tests de composants React
-- **MSW (Mock Service Worker)**: Mock des APIs
+- **Jest**: Test framework
+- **React Testing Library**: React component tests
+- **MSW (Mock Service Worker)**: API mocking
 
 **Coverage**:
-- Objectif: **80% minimum** de couverture de code
-- Outil: Jest coverage ou Istanbul
+- Target: **80% minimum** code coverage
+- Tool: Jest coverage or Istanbul
 
-### 2.3 Exemples de Tests
+### 2.3 Test Examples
 
-#### Test Backend (Service)
+#### Backend Test (Service)
 
 ```typescript
 describe('ConversationService', () => {
@@ -98,14 +98,14 @@ describe('ConversationService', () => {
 });
 ```
 
-#### Test Frontend (Composant)
+#### Frontend Test (Component)
 
 ```typescript
 describe('ChatComponent', () => {
   it('should render chat interface', () => {
     render(<ChatComponent />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    expect(screen.getByText('Envoyer')).toBeInTheDocument();
+    expect(screen.getByText('Send')).toBeInTheDocument();
   });
 
   it('should send message when form is submitted', async () => {
@@ -113,13 +113,13 @@ describe('ChatComponent', () => {
     render(<ChatComponent onSendMessage={mockSendMessage} />);
     
     const input = screen.getByRole('textbox');
-    const button = screen.getByText('Envoyer');
+    const button = screen.getByText('Send');
     
-    fireEvent.change(input, { target: { value: 'Bonjour' } });
+    fireEvent.change(input, { target: { value: 'Hello' } });
     fireEvent.click(button);
     
     await waitFor(() => {
-      expect(mockSendMessage).toHaveBeenCalledWith('Bonjour');
+      expect(mockSendMessage).toHaveBeenCalledWith('Hello');
     });
   });
 });
@@ -127,43 +127,43 @@ describe('ChatComponent', () => {
 
 ---
 
-## 3. Tests d'Intégration
+## 3. Integration Tests
 
-### 3.1 Portée
+### 3.1 Scope
 
-**Services ↔ Base de Données**:
+**Services ↔ Database**:
 - CRUD operations
-- Requêtes complexes
+- Complex queries
 - Transactions
 - Migrations
 
-**Services ↔ Services Externes**:
-- Appels API externes (IA, TTS, STT)
-- Gestion des erreurs
+**Services ↔ External Services**:
+- External API calls (AI, TTS, STT)
+- Error handling
 - Retry logic
 - Timeouts
 
-**Services ↔ Services Internes**:
-- Communication entre microservices
+**Services ↔ Internal Services**:
+- Microservice communication
 - Event handling
 - Message queues
 
 **Frontend ↔ Backend**:
-- Appels API
-- Authentification
-- Gestion des erreurs
+- API calls
+- Authentication
+- Error handling
 - WebSocket connections
 
-### 3.2 Outils
+### 3.2 Tools
 
-- **Jest**: Tests d'intégration
-- **Docker Compose**: Environnement de test isolé
-- **Testcontainers**: Containers pour bases de données de test
-- **Nock**: Mock des requêtes HTTP externes
+- **Jest**: Integration tests
+- **Docker Compose**: Isolated test environment
+- **Testcontainers**: Containers for test databases
+- **Nock**: Mock external HTTP requests
 
-### 3.3 Exemples de Tests
+### 3.3 Test Examples
 
-#### Test Service ↔ Database
+#### Service ↔ Database Test
 
 ```typescript
 describe('ConversationService Integration', () => {
@@ -191,13 +191,13 @@ describe('ConversationService Integration', () => {
 });
 ```
 
-#### Test Service ↔ External API
+#### Service ↔ External API Test
 
 ```typescript
 describe('AIService Integration', () => {
   it('should call AI service and return response', async () => {
     const response = await aiService.chat({
-      message: 'Bonjour',
+      message: 'Hello',
       conversationId: 'conv-123'
     });
     
@@ -219,34 +219,34 @@ describe('AIService Integration', () => {
 });
 ```
 
-**Note**: Les tests d'intégration avec services externes diffèrent selon la version (cloud vs local).
+**Note**: Integration tests with external services differ by version (cloud vs local).
 
 ---
 
-## 4. Tests End-to-End (E2E)
+## 4. End-to-End Tests (E2E)
 
-### 4.1 Portée
+### 4.1 Scope
 
-**Scénarios Utilisateur Complets**:
-- Inscription et connexion
-- Création de profil avec croyances
-- Conversation complète (texte et vocal)
-- Consultation de l'historique
-- Gestion des préférences
+**Full User Scenarios**:
+- Registration and login
+- Profile creation with beliefs
+- Full conversation (text and voice)
+- History browsing
+- Preference management
 
-**Flux Critiques**:
-- Parcours utilisateur complet
-- Gestion des erreurs utilisateur
-- Performance des interactions
-- Sécurité (authentification, autorisation)
+**Critical Flows**:
+- Full user journey
+- User error handling
+- Interaction performance
+- Security (authentication, authorization)
 
-### 4.2 Outils
+### 4.2 Tools
 
-- **Playwright**: Tests E2E cross-browser
-- **Cypress**: Alternative pour tests E2E
-- **Docker Compose**: Stack complète pour tests
+- **Playwright**: Cross-browser E2E tests
+- **Cypress**: Alternative for E2E tests
+- **Docker Compose**: Full stack for tests
 
-### 4.3 Exemples de Tests
+### 4.3 Test Examples
 
 ```typescript
 describe('User Journey E2E', () => {
@@ -259,18 +259,18 @@ describe('User Journey E2E', () => {
     
     // 2. Profile setup
     await page.waitForURL('**/profile');
-    await page.fill('[name="beliefs"]', 'Bouddhisme, Méditation');
-    await page.click('button:has-text("Continuer")');
+    await page.fill('[name="beliefs"]', 'Buddhism, Meditation');
+    await page.click('button:has-text("Continue")');
     
     // 3. Start conversation
     await page.waitForURL('**/chat');
-    await page.fill('[data-testid="message-input"]', 'Bonjour, je cherche des livres sur la méditation');
+    await page.fill('[data-testid="message-input"]', 'Hello, I am looking for books on meditation');
     await page.click('[data-testid="send-button"]');
     
     // 4. Verify response
     await page.waitForSelector('[data-testid="ai-message"]');
     const response = await page.textContent('[data-testid="ai-message"]');
-    expect(response).toContain('méditation');
+    expect(response).toContain('meditation');
     
     // 5. Check history
     await page.click('[data-testid="history-button"]');
@@ -283,47 +283,47 @@ describe('User Journey E2E', () => {
 
 ---
 
-## 5. Tests de Performance
+## 5. Performance Tests
 
-### 5.1 Portée
+### 5.1 Scope
 
-- **Load Testing**: Charge normale et pic
-- **Stress Testing**: Au-delà de la capacité normale
-- **Spike Testing**: Augmentation soudaine de charge
-- **Endurance Testing**: Charge prolongée
+- **Load Testing**: Normal and peak load
+- **Stress Testing**: Beyond normal capacity
+- **Spike Testing**: Sudden load increase
+- **Endurance Testing**: Sustained load
 
-### 5.2 Outils
+### 5.2 Tools
 
-- **k6**: Tests de charge
-- **Artillery**: Alternative pour tests de charge
-- **Apache JMeter**: Tests de performance
+- **k6**: Load testing
+- **Artillery**: Load testing alternative
+- **Apache JMeter**: Performance testing
 
-### 5.3 Métriques
+### 5.3 Metrics
 
-- **Temps de réponse**: P50, P95, P99
-- **Throughput**: Requêtes par seconde
-- **Erreur rate**: Taux d'erreur
-- **Resource usage**: CPU, mémoire, réseau
+- **Response time**: P50, P95, P99
+- **Throughput**: Requests per second
+- **Error rate**: Error rate
+- **Resource usage**: CPU, memory, network
 
 ---
 
-## 6. Tests de Sécurité
+## 6. Security Tests
 
-### 6.1 Portée
+### 6.1 Scope
 
-- **Authentification**: Tests de login, tokens, sessions
-- **Autorisation**: Tests de permissions, RBAC
-- **Input Validation**: Injection SQL, XSS, CSRF
-- **Data Protection**: Chiffrement, données sensibles
+- **Authentication**: Login, token, session tests
+- **Authorization**: Permission tests, RBAC
+- **Input Validation**: SQL injection, XSS, CSRF
+- **Data Protection**: Encryption, sensitive data
 - **API Security**: Rate limiting, CORS, headers
 
-### 6.2 Outils
+### 6.2 Tools
 
-- **OWASP ZAP**: Tests de sécurité
-- **Burp Suite**: Tests de sécurité avancés
-- **Jest**: Tests de sécurité unitaires
+- **OWASP ZAP**: Security testing
+- **Burp Suite**: Advanced security testing
+- **Jest**: Unit security tests
 
-### 6.3 Exemples de Tests
+### 6.3 Test Examples
 
 ```typescript
 describe('Security Tests', () => {
@@ -358,62 +358,62 @@ describe('Security Tests', () => {
 
 ---
 
-## 7. Tests de Domaine (AI)
+## 7. Domain Tests (AI)
 
-### 7.1 Portée
+### 7.1 Scope
 
-- **Limitation du Domaine**: Vérifier que l'IA reste dans le domaine bien-être
-- **Détection Médicale**: Vérifier la détection et redirection des questions médicales
-- **Qualité des Réponses**: Vérifier la pertinence des réponses
-- **Sélection de Modèle**: Vérifier la logique de sélection de modèle
+- **Domain Limitation**: Ensure AI stays within the well-being domain
+- **Medical Detection**: Verify detection and redirection of medical questions
+- **Response Quality**: Check response relevance
+- **Model Selection**: Validate model selection logic
 
-### 7.2 Exemples de Tests
+### 7.2 Test Examples
 
 ```typescript
 describe('AI Domain Tests', () => {
   it('should redirect medical questions', async () => {
     const response = await aiService.chat({
-      message: 'J\'ai mal à la tête, que dois-je faire?',
+      message: 'I have a headache, what should I do?',
       conversationId: 'conv-123'
     });
     
-    expect(response.message).toContain('professionnel de santé');
-    expect(response.message).toContain('ne remplace pas');
+    expect(response.message).toContain('healthcare professional');
+    expect(response.message).toContain('does not replace');
   });
 
   it('should stay within wellness domain', async () => {
     const response = await aiService.chat({
-      message: 'Comment méditer?',
+      message: 'How do I meditate?',
       conversationId: 'conv-123'
     });
     
-    expect(response.message).not.toContain('médical');
+    expect(response.message).not.toContain('medical');
     expect(response.domain).toBe('wellness');
   });
 
   it('should use appropriate model based on complexity', async () => {
     const simpleResponse = await aiService.chat({
-      message: 'Bonjour',
+      message: 'Hello',
       conversationId: 'conv-123'
     });
-    // Version Standard: expect(simpleResponse.model).toMatch(/gpt-3.5|claude-haiku/);
-    // Version Open Source: expect(simpleResponse.model).toMatch(/phi|mistral-7b/);
+    // Standard Version: expect(simpleResponse.model).toMatch(/gpt-3.5|claude-haiku/);
+    // Open Source Version: expect(simpleResponse.model).toMatch(/phi|mistral-7b/);
     
     const complexResponse = await aiService.chat({
-      message: 'Explique-moi en détail la philosophie bouddhiste et ses applications modernes',
+      message: 'Explain in detail Buddhist philosophy and its modern applications',
       conversationId: 'conv-123'
     });
-    // Version Standard: expect(complexResponse.model).toMatch(/gpt-4|claude-sonnet/);
-    // Version Open Source: expect(complexResponse.model).toMatch(/llama2-70b|mistral-large/);
+    // Standard Version: expect(complexResponse.model).toMatch(/gpt-4|claude-sonnet/);
+    // Open Source Version: expect(complexResponse.model).toMatch(/llama2-70b|mistral-large/);
   });
 });
 ```
 
 ---
 
-## 8. Structure des Tests
+## 8. Test Structure
 
-### 8.1 Organisation
+### 8.1 Organization
 
 ```
 tests/
@@ -447,16 +447,16 @@ tests/
 
 ## 9. CI/CD Integration
 
-### 9.1 Pipeline de Tests
+### 9.1 Test Pipeline
 
-1. **Lint & Format**: Vérification du code
-2. **Unit Tests**: Tests unitaires rapides
-3. **Integration Tests**: Tests d'intégration
-4. **E2E Tests**: Tests end-to-end (optionnel en CI, obligatoire en staging)
-5. **Security Tests**: Tests de sécurité
-6. **Performance Tests**: Tests de performance (optionnel)
+1. **Lint & Format**: Code checks
+2. **Unit Tests**: Fast unit tests
+3. **Integration Tests**: Integration tests
+4. **E2E Tests**: End-to-end tests (optional in CI, required in staging)
+5. **Security Tests**: Security tests
+6. **Performance Tests**: Performance tests (optional)
 
-### 9.2 Configuration CI
+### 9.2 CI Configuration
 
 ```yaml
 # .github/workflows/test.yml
@@ -480,18 +480,18 @@ jobs:
 
 ---
 
-## 10. Objectifs de Couverture
+## 10. Coverage Goals
 
-- **Unit Tests**: 80% minimum
-- **Integration Tests**: 70% minimum des intégrations critiques
-- **E2E Tests**: 100% des scénarios critiques
-- **Security Tests**: 100% des endpoints et fonctionnalités sensibles
+- **Unit Tests**: minimum 80%
+- **Integration Tests**: minimum 70% of critical integrations
+- **E2E Tests**: 100% of critical scenarios
+- **Security Tests**: 100% of sensitive endpoints and features
 
 ---
 
-## 11. Outils et Technologies
+## 11. Tools and Technologies
 
-### 11.1 Stack de Tests
+### 11.1 Test Stack
 
 **Backend**:
 - Jest
@@ -515,7 +515,7 @@ jobs:
 
 **Security**:
 - OWASP ZAP
-- Jest (tests de sécurité)
+- Jest (security tests)
 
 **Coverage**:
 - Jest Coverage
@@ -523,4 +523,4 @@ jobs:
 
 ---
 
-**Note**: Cette stratégie de tests est commune aux deux versions. Les implémentations peuvent différer selon les services utilisés (cloud vs open source).
+**Note**: This test strategy is shared across both versions. Implementations may differ depending on the services used (cloud vs open source).

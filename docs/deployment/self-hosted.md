@@ -1,17 +1,17 @@
-# Guide de Déploiement Self-Hosted - Serein Open Source
+# Self-Hosted Deployment Guide - Serein Open Source
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
 ---
 
-## 1. Vue d'Ensemble
+## 1. Overview
 
-Ce guide vous permet de déployer Serein entièrement en self-hosted sur votre propre infrastructure.
+This guide helps you deploy Serein fully self-hosted on your own infrastructure.
 
 ---
 
-## 2. Prérequis
+## 2. Prerequisites
 
 ### 2.1 Infrastructure
 
@@ -19,32 +19,32 @@ Ce guide vous permet de déployer Serein entièrement en self-hosted sur votre p
 - CPU: 8 cores
 - RAM: 32 GB
 - Storage: 500 GB SSD
-- GPU: Optionnel (recommandé pour LLM)
+- GPU: Optional (recommended for LLM)
 
-**Recommandé**:
+**Recommended**:
 - CPU: 16+ cores
 - RAM: 64+ GB
 - Storage: 1 TB+ SSD
-- GPU: NVIDIA avec 16+ GB VRAM (pour LLM local)
+- GPU: NVIDIA with 16+ GB VRAM (for local LLM)
 
-### 2.2 Logiciels
+### 2.2 Software
 
 - Docker 24.0+
 - Docker Compose 2.0+
-- Node.js 20 LTS+ (pour développement)
+- Node.js 20 LTS+ (for development)
 - Git
 
-### 2.3 Optionnel
+### 2.3 Optional
 
-- Kubernetes (pour production)
-- Nginx (pour reverse proxy)
-- Certbot (pour SSL/TLS)
+- Kubernetes (for production)
+- Nginx (for reverse proxy)
+- Certbot (for SSL/TLS)
 
 ---
 
 ## 3. Installation
 
-### 3.1 Cloner le Repository
+### 3.1 Clone the Repository
 
 ```bash
 git clone https://github.com/your-org/serein-opensource.git
@@ -54,39 +54,39 @@ cd serein-opensource
 ### 3.2 Configuration
 
 ```bash
-# Copier le fichier d'environnement
+# Copy the environment file
 cp env.example .env
 
-# Éditer les variables d'environnement
+# Edit environment variables
 nano .env
 ```
 
-### 3.3 Démarrer les Services
+### 3.3 Start Services
 
 ```bash
-# Démarrer tous les services
+# Start all services
 docker-compose up -d
 
-# Vérifier les logs
+# Check logs
 docker-compose logs -f
 ```
 
-### 3.4 Initialiser Ollama (LLM)
+### 3.4 Initialize Ollama (LLM)
 
 ```bash
-# Télécharger un modèle (ex: Llama 2)
+# Download a model (e.g., Llama 2)
 docker exec serein-ollama ollama pull llama2
 
-# Ou Mistral (plus léger)
+# Or Mistral (lighter)
 docker exec serein-ollama ollama pull mistral
 
-# Vérifier les modèles disponibles
+# List available models
 docker exec serein-ollama ollama list
 ```
 
-### 3.5 Initialiser Weaviate
+### 3.5 Initialize Weaviate
 
-Weaviate démarre automatiquement. Vérifiez avec:
+Weaviate starts automatically. Verify with:
 
 ```bash
 curl http://localhost:8080/v1/.well-known/ready
@@ -94,102 +94,102 @@ curl http://localhost:8080/v1/.well-known/ready
 
 ---
 
-## 4. Configuration des Services
+## 4. Service Configuration
 
 ### 4.1 Ollama (LLM)
 
-**Modèles disponibles**:
-- `llama2` - 7B parameters (recommandé pour début)
-- `mistral` - 7B parameters (rapide)
-- `llama2:13b` - 13B parameters (meilleure qualité)
-- `llama2:70b` - 70B parameters (meilleure qualité, nécessite GPU)
+**Available models**:
+- `llama2` - 7B parameters (recommended to start)
+- `mistral` - 7B parameters (fast)
+- `llama2:13b` - 13B parameters (better quality)
+- `llama2:70b` - 70B parameters (best quality, requires GPU)
 
-**Télécharger un modèle**:
+**Download a model**:
 ```bash
 docker exec serein-ollama ollama pull llama2
 ```
 
-**Utiliser un modèle spécifique**:
-Modifier `OLLAMA_DEFAULT_MODEL` dans `.env`
+**Use a specific model**:
+Update `OLLAMA_DEFAULT_MODEL` in `.env`
 
 ### 4.2 Coqui TTS
 
-**Voix disponibles**:
-- `tts_models/fr/css10/vits` - Français
-- `tts_models/en/ljspeech/tacotron2-DDC` - Anglais
+**Available voices**:
+- `tts_models/fr/css10/vits` - French
+- `tts_models/en/ljspeech/tacotron2-DDC` - English
 
 **Configuration**:
-Modifier `COQUI_TTS_DEFAULT_VOICE` dans `.env`
+Update `COQUI_TTS_DEFAULT_VOICE` in `.env`
 
 ### 4.3 Whisper
 
-**Modèles disponibles**:
-- `tiny` - Plus rapide, moins précis
-- `base` - Équilibre (recommandé)
-- `small` - Meilleure qualité
-- `medium` - Très bonne qualité
-- `large` - Meilleure qualité (nécessite plus de RAM)
+**Available models**:
+- `tiny` - Faster, less accurate
+- `base` - Balanced (recommended)
+- `small` - Better quality
+- `medium` - Very good quality
+- `large` - Best quality (requires more RAM)
 
 **Configuration**:
-Modifier `WHISPER_MODEL` dans `.env`
+Update `WHISPER_MODEL` in `.env`
 
 ### 4.4 Weaviate
 
-**Schéma**:
-Le schéma est créé automatiquement au premier démarrage.
+**Schema**:
+The schema is created automatically on first startup.
 
-**Indexer des données**:
-Voir la documentation de l'API Content Service.
+**Indexing data**:
+See the Content Service API documentation.
 
 ---
 
 ## 5. Monitoring
 
-### 5.1 Accès aux Interfaces
+### 5.1 Access Interfaces
 
 - **Grafana**: http://localhost:3001 (admin/admin)
 - **Prometheus**: http://localhost:9090
 - **Loki**: http://localhost:3100
 
-### 5.2 Configuration Grafana
+### 5.2 Grafana Configuration
 
-1. Se connecter à Grafana
-2. Ajouter Prometheus comme datasource (http://prometheus:9090)
-3. Importer les dashboards depuis `infrastructure/monitoring/grafana/dashboards`
+1. Log in to Grafana
+2. Add Prometheus as a datasource (http://prometheus:9090)
+3. Import dashboards from `infrastructure/monitoring/grafana/dashboards`
 
-### 5.3 Alertes
+### 5.3 Alerts
 
-Configurer les alertes dans Prometheus:
-- Fichier: `infrastructure/monitoring/prometheus/alerts.yml`
+Configure alerts in Prometheus:
+- File: `infrastructure/monitoring/prometheus/alerts.yml`
 
 ---
 
 ## 6. Production
 
-### 6.1 Sécurité
+### 6.1 Security
 
 **SSL/TLS**:
 ```bash
-# Utiliser Certbot avec Nginx
+# Use Certbot with Nginx
 certbot --nginx -d yourdomain.com
 ```
 
 **Firewall**:
 ```bash
-# Ouvrir uniquement les ports nécessaires
+# Open only required ports
 ufw allow 80/tcp
 ufw allow 443/tcp
 ufw enable
 ```
 
 **Secrets**:
-- Ne jamais commiter `.env`
-- Utiliser un gestionnaire de secrets (HashiCorp Vault, etc.)
+- Never commit `.env`
+- Use a secrets manager (HashiCorp Vault, etc.)
 
 ### 6.2 Performance
 
-**GPU pour Ollama**:
-Modifier `docker-compose.yml`:
+**GPU for Ollama**:
+Edit `docker-compose.yml`:
 ```yaml
 ollama:
   deploy:
@@ -202,31 +202,31 @@ ollama:
 ```
 
 **Scaling**:
-- Utiliser Kubernetes pour scaling horizontal
-- Configurer auto-scaling basé sur CPU/mémoire
+- Use Kubernetes for horizontal scaling
+- Configure auto-scaling based on CPU/memory
 
 ### 6.3 Backup
 
 **PostgreSQL**:
 ```bash
-# Backup quotidien
+# Daily backup
 docker exec serein-postgres pg_dump -U serein serein > backup.sql
 ```
 
 **Weaviate**:
-Les données sont persistées dans le volume Docker.
+Data is persisted in the Docker volume.
 
 **Redis**:
-Optionnel (données temporaires).
+Optional (temporary data).
 
 ---
 
 ## 7. Maintenance
 
-### 7.1 Mise à Jour
+### 7.1 Updates
 
 ```bash
-# Mettre à jour les images Docker
+# Update Docker images
 docker-compose pull
 docker-compose up -d
 ```
@@ -234,90 +234,90 @@ docker-compose up -d
 ### 7.2 Logs
 
 ```bash
-# Voir les logs de tous les services
+# View logs for all services
 docker-compose logs -f
 
-# Logs d'un service spécifique
+# Logs for a specific service
 docker-compose logs -f ollama
 ```
 
-### 7.3 Nettoyage
+### 7.3 Cleanup
 
 ```bash
-# Supprimer les volumes non utilisés
+# Remove unused volumes
 docker volume prune
 
-# Supprimer les images non utilisées
+# Remove unused images
 docker image prune
 ```
 
 ---
 
-## 8. Dépannage
+## 8. Troubleshooting
 
-### 8.1 Ollama ne répond pas
+### 8.1 Ollama not responding
 
 ```bash
-# Vérifier les logs
+# Check logs
 docker-compose logs ollama
 
-# Redémarrer
+# Restart
 docker-compose restart ollama
 
-# Vérifier que le modèle est téléchargé
+# Verify model download
 docker exec serein-ollama ollama list
 ```
 
-### 8.2 Weaviate ne démarre pas
+### 8.2 Weaviate not starting
 
 ```bash
-# Vérifier les logs
+# Check logs
 docker-compose logs weaviate
 
-# Vérifier l'espace disque
+# Check disk space
 df -h
 ```
 
-### 8.3 Problèmes de mémoire
+### 8.3 Memory issues
 
 ```bash
-# Vérifier l'utilisation
+# Check usage
 docker stats
 
-# Réduire la taille des modèles Ollama
-# Utiliser des modèles plus petits (mistral au lieu de llama2:70b)
+# Reduce Ollama model size
+# Use smaller models (mistral instead of llama2:70b)
 ```
 
 ---
 
-## 9. Optimisation
+## 9. Optimization
 
-### 9.1 Performance LLM
+### 9.1 LLM Performance
 
-- Utiliser GPU si disponible
-- Quantifier les modèles (réduire la précision pour gagner en vitesse)
-- Utiliser des modèles plus petits pour questions simples
+- Use GPU if available
+- Quantize models (reduce precision for speed)
+- Use smaller models for simple questions
 
 ### 9.2 Cache
 
-- Configurer Redis pour cache des réponses fréquentes
-- Utiliser CDN pour assets statiques
+- Configure Redis to cache frequent responses
+- Use a CDN for static assets
 
-### 9.3 Base de Données
+### 9.3 Database
 
-- Optimiser les index PostgreSQL
-- Configurer connection pooling
-- Utiliser read replicas si nécessaire
+- Optimize PostgreSQL indexes
+- Configure connection pooling
+- Use read replicas if needed
 
 ---
 
 ## 10. Support
 
-Pour toute question:
-- Ouvrir une issue sur GitHub
-- Consulter la documentation
-- Contacter la communauté
+For questions:
+- Open an issue on GitHub
+- Check the documentation
+- Contact the community
 
 ---
 
-**Note**: Ce guide est pour un déploiement self-hosted. Pour un déploiement cloud, voir la documentation Kubernetes.
+**Note**: This guide is for self-hosted deployment. For cloud deployment, see the Kubernetes documentation.

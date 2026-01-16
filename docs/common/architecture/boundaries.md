@@ -1,388 +1,388 @@
-# Boundaries (Limites) du Système - Serein
+# System Boundaries - Serein
 
 ## Version: 1.0
 ## Date: 09.01.2026
 
 ---
 
-## 1. Vue d'Ensemble
+## 1. Overview
 
-Ce document définit les limites (boundaries) du système Serein, c'est-à-dire ce que le système fait, ce qu'il ne fait pas, et comment il interagit avec les systèmes externes.
+This document defines the system boundaries for Serein: what the system does, what it does not do, and how it interacts with external systems.
 
-**Note**: Ces boundaries sont communes à toutes les versions de Serein. Les implémentations peuvent différer selon la version (services cloud vs open source).
-
----
-
-## 2. Boundaries Fonctionnelles
-
-### 2.1 Ce que le Système FAIT ✅
-
-#### Gestion des Utilisateurs
-- ✅ Authentification et autorisation
-- ✅ Gestion des profils utilisateur
-- ✅ Stockage des préférences utilisateur
-- ✅ Gestion des sessions
-
-#### Conversation IA
-- ✅ Conversations textuelles avec agent IA
-- ✅ Conversations vocales avec agent IA
-- ✅ Gestion du contexte de conversation
-- ✅ Historique des conversations
-- ✅ Recherche de contenu basée sur les croyances
-
-#### Domaine du Bien-être
-- ✅ Discussions sur la philosophie
-- ✅ Discussions sur la spiritualité
-- ✅ Discussions sur le développement personnel
-- ✅ Discussions sur la méditation
-- ✅ Discussions sur le bien-être mental et émotionnel
-- ✅ Recommandations de livres et ressources
-
-#### Optimisation
-- ✅ Sélection intelligente de modèles IA (performance/complexité)
-- ✅ Cache des réponses fréquentes
-- ✅ Tracking de l'utilisation des ressources
-
-### 2.2 Ce que le Système NE FAIT PAS ❌
-
-#### Diagnostic et Conseils Médicaux
-- ❌ Diagnostic médical
-- ❌ Conseils médicaux
-- ❌ Prescription de médicaments
-- ❌ Traitement de conditions médicales
-- ❌ Remplacement de professionnels de santé
-
-#### Autres Domaines Hors Scope
-- ❌ Conseils légaux (redirection vers avocats)
-- ❌ Conseils financiers (redirection vers conseillers)
-- ❌ Conseils techniques spécialisés (redirection vers experts)
-
-#### Gestion de Données Médicales
-- ❌ Stockage de données médicales sensibles
-- ❌ Gestion de dossiers médicaux
-- ❌ Partage de données médicales
+**Note**: These boundaries are shared across all Serein versions. Implementations may differ by version (cloud services vs open source).
 
 ---
 
-## 3. Boundaries Techniques
+## 2. Functional Boundaries
 
-### 3.1 Boundaries Internes
+### 2.1 What the System DOES ✅
+
+#### User Management
+- ✅ Authentication and authorization
+- ✅ User profile management
+- ✅ User preference storage
+- ✅ Session management
+
+#### AI Conversation
+- ✅ Text conversations with an AI agent
+- ✅ Voice conversations with an AI agent
+- ✅ Conversation context management
+- ✅ Conversation history
+- ✅ Belief-based content search
+
+#### Well-being Domain
+- ✅ Discussions about philosophy
+- ✅ Discussions about spirituality
+- ✅ Discussions about personal development
+- ✅ Discussions about meditation
+- ✅ Discussions about mental and emotional well-being
+- ✅ Book and resource recommendations
+
+#### Optimization
+- ✅ Smart AI model selection (performance/complexity)
+- ✅ Cache for frequent responses
+- ✅ Resource usage tracking
+
+### 2.2 What the System DOES NOT DO ❌
+
+#### Medical Diagnosis and Advice
+- ❌ Medical diagnosis
+- ❌ Medical advice
+- ❌ Prescribing medication
+- ❌ Treating medical conditions
+- ❌ Replacing healthcare professionals
+
+#### Other Out-of-Scope Domains
+- ❌ Legal advice (redirect to lawyers)
+- ❌ Financial advice (redirect to advisors)
+- ❌ Specialized technical advice (redirect to experts)
+
+#### Medical Data Management
+- ❌ Storing sensitive medical data
+- ❌ Managing medical records
+- ❌ Sharing medical data
+
+---
+
+## 3. Technical Boundaries
+
+### 3.1 Internal Boundaries
 
 #### Frontend ↔ Backend
-- **Communication**: Uniquement via API Gateway
-- **Protocole**: HTTPS pour REST, WebSocket pour temps réel
-- **Authentification**: JWT tokens requis (sauf endpoints publics)
-- **Pas d'accès direct**: Frontend n'accède jamais directement aux bases de données
+- **Communication**: Only through API Gateway
+- **Protocol**: HTTPS for REST, WebSocket for real-time
+- **Authentication**: JWT tokens required (except public endpoints)
+- **No direct access**: Frontend never accesses databases directly
 
-#### Services ↔ Services
-- **Communication**: APIs REST ou message queue
-- **Pas de partage de DB**: Chaque service a sa propre base de données
-- **Découplage**: Services indépendants et déployables séparément
-- **Contracts**: APIs définies via OpenAPI/Swagger
+#### Service ↔ Service
+- **Communication**: REST APIs or message queue
+- **No DB sharing**: Each service has its own database
+- **Decoupling**: Services are independent and deployable separately
+- **Contracts**: APIs defined via OpenAPI/Swagger
 
 #### Services ↔ External Services
-- **Abstraction**: Adapters/clients pour services externes
-- **Retry Logic**: Retry avec backoff exponentiel
-- **Circuit Breaker**: Protection contre pannes en cascade
-- **Timeout**: Timeouts configurés pour tous les appels externes
-- **Fallback**: Mécanismes de fallback quand possible
+- **Abstraction**: Adapters/clients for external services
+- **Retry Logic**: Retry with exponential backoff
+- **Circuit Breaker**: Protection against cascading failures
+- **Timeout**: Timeouts configured for all external calls
+- **Fallback**: Fallback mechanisms when possible
 
-### 3.2 Boundaries Externes
+### 3.2 External Boundaries
 
-#### Services IA
-**Version Standard**: OpenAI, Anthropic (cloud)
-**Version Open Source**: Ollama (local)
+#### AI Services
+**Standard Version**: OpenAI, Anthropic (cloud)  
+**Open Source Version**: Ollama (local)
 
-- **Responsabilité**: Fournir des réponses IA
-- **Limite**: Le système ne contrôle pas la qualité intrinsèque des modèles
-- **Gestion**: Le système gère la sélection de modèle et le contexte
+- **Responsibility**: Provide AI responses
+- **Limit**: The system does not control intrinsic model quality
+- **Handling**: The system manages model selection and context
 
-#### Services Vocaux
-**Version Standard**: ElevenLabs, Azure Speech (cloud)
-**Version Open Source**: Coqui TTS, Whisper (local)
+#### Voice Services
+**Standard Version**: ElevenLabs, Azure Speech (cloud)  
+**Open Source Version**: Coqui TTS, Whisper (local)
 
-- **Responsabilité**: Synthèse et reconnaissance vocale
-- **Limite**: Le système ne contrôle pas la qualité de la voix
-- **Gestion**: Le système gère les préférences utilisateur et le formatage
+- **Responsibility**: Speech synthesis and recognition
+- **Limit**: The system does not control voice quality
+- **Handling**: The system manages user preferences and formatting
 
-#### Bases de Données Externes
-- **PostgreSQL**: Stockage principal
-- **Redis**: Cache et sessions
-- **Vector DB**: Recherche sémantique
-  - **Version Standard**: Pinecone (cloud)
-  - **Version Open Source**: Weaviate/Qdrant (self-hosted)
+#### External Databases
+- **PostgreSQL**: Primary storage
+- **Redis**: Cache and sessions
+- **Vector DB**: Semantic search
+  - **Standard Version**: Pinecone (cloud)
+  - **Open Source Version**: Weaviate/Qdrant (self-hosted)
 
 ---
 
-## 4. Boundaries de Domaine
+## 4. Domain Boundaries
 
-### 4.1 Domaine du Bien-être (IN SCOPE)
+### 4.1 Well-being Domain (IN SCOPE)
 
-#### Philosophie
-- ✅ Philosophie occidentale et orientale
-- ✅ Éthique et morale
-- ✅ Questions existentielles
-- ✅ Réflexions sur la vie
+#### Philosophy
+- ✅ Western and Eastern philosophy
+- ✅ Ethics and morality
+- ✅ Existential questions
+- ✅ Reflections on life
 
-#### Spiritualité
-- ✅ Traditions spirituelles (Bouddhisme, Hindouisme, etc.)
-- ✅ Méditation et pratiques contemplatives
-- ✅ Développement spirituel
-- ✅ Questions métaphysiques
+#### Spirituality
+- ✅ Spiritual traditions (Buddhism, Hinduism, etc.)
+- ✅ Meditation and contemplative practices
+- ✅ Spiritual development
+- ✅ Metaphysical questions
 
-#### Développement Personnel
-- ✅ Croissance personnelle
-- ✅ Gestion des émotions
-- ✅ Habitudes saines
+#### Personal Development
+- ✅ Personal growth
+- ✅ Emotion management
+- ✅ Healthy habits
 - ✅ Mindfulness
 
-#### Bien-être Mental
-- ✅ Bien-être émotionnel
-- ✅ Gestion du stress
-- ✅ Techniques de relaxation
-- ✅ Équilibre vie/travail
+#### Mental Well-being
+- ✅ Emotional well-being
+- ✅ Stress management
+- ✅ Relaxation techniques
+- ✅ Work-life balance
 
-### 4.2 Domaines Hors Scope (avec Redirection)
+### 4.2 Out-of-Scope Domains (with Redirection)
 
-#### Questions Médicales
-- **Détection**: Le système détecte les questions médicales
-- **Réponse**: Disclaimer + redirection vers professionnels
-- **Exemple**: "Je ne suis pas un professionnel de santé. Pour des questions médicales, veuillez consulter un médecin."
+#### Medical Questions
+- **Detection**: The system detects medical questions
+- **Response**: Disclaimer + redirect to professionals
+- **Example**: "I am not a healthcare professional. For medical questions, please consult a doctor."
 
-#### Questions Légales
-- **Détection**: Le système détecte les questions légales
-- **Réponse**: Redirection vers avocats
-- **Exemple**: "Pour des questions légales, veuillez consulter un avocat qualifié."
+#### Legal Questions
+- **Detection**: The system detects legal questions
+- **Response**: Redirect to lawyers
+- **Example**: "For legal questions, please consult a qualified lawyer."
 
-#### Questions Financières
-- **Détection**: Le système détecte les questions financières complexes
-- **Réponse**: Redirection vers conseillers financiers
-- **Exemple**: "Pour des conseils financiers, veuillez consulter un conseiller financier certifié."
-
----
-
-## 5. Boundaries de Sécurité
-
-### 5.1 Données Utilisateur
-
-#### Données Stockées
-- ✅ Profil utilisateur (nom, email, préférences)
-- ✅ Croyances et centres d'intérêt
-- ✅ Historique de conversation
-- ✅ Préférences de voix et interface
-
-#### Données NON Stockées
-- ❌ Mots de passe en clair (seulement hashés)
-- ❌ Données médicales
-- ❌ Informations financières sensibles
-- ❌ Données de paiement (gérées par processeur tiers)
-
-### 5.2 Accès et Autorisation
-
-#### Accès Autorisé
-- ✅ Utilisateur accède à ses propres données
-- ✅ Administrateurs accèdent aux données système (logs, métriques)
-- ✅ Services internes communiquent via APIs authentifiées
-
-#### Accès NON Autorisé
-- ❌ Accès direct aux bases de données depuis l'extérieur
-- ❌ Partage de données entre utilisateurs
-- ❌ Accès aux données sans authentification
+#### Financial Questions
+- **Detection**: The system detects complex financial questions
+- **Response**: Redirect to financial advisors
+- **Example**: "For financial advice, please consult a certified financial advisor."
 
 ---
 
-## 6. Boundaries de Performance
+## 5. Security Boundaries
 
-### 6.1 Garanties
+### 5.1 User Data
 
-#### Temps de Réponse
-- ✅ Questions simples: < 3 secondes
-- ✅ Questions complexes: < 10 secondes
-- ✅ Interface: < 2 secondes de chargement
+#### Stored Data
+- ✅ User profile (name, email, preferences)
+- ✅ Beliefs and interests
+- ✅ Conversation history
+- ✅ Voice and interface preferences
 
-#### Scalabilité
-- ✅ Support de 1000+ utilisateurs simultanés
-- ✅ Scalabilité horizontale
-- ✅ Load balancing automatique
+#### NOT Stored
+- ❌ Plaintext passwords (hashed only)
+- ❌ Medical data
+- ❌ Sensitive financial information
+- ❌ Payment data (handled by third-party processors)
+
+### 5.2 Access and Authorization
+
+#### Authorized Access
+- ✅ Users access their own data
+- ✅ Admins access system data (logs, metrics)
+- ✅ Internal services communicate via authenticated APIs
+
+#### Unauthorized Access
+- ❌ Direct database access from outside
+- ❌ Data sharing between users
+- ❌ Access without authentication
+
+---
+
+## 6. Performance Boundaries
+
+### 6.1 Guarantees
+
+#### Response Time
+- ✅ Simple questions: < 3 seconds
+- ✅ Complex questions: < 10 seconds
+- ✅ Interface: < 2 seconds to load
+
+#### Scalability
+- ✅ Support 1000+ concurrent users
+- ✅ Horizontal scalability
+- ✅ Automatic load balancing
 
 ### 6.2 Limitations
 
-#### Limitations Techniques
-- ⚠️ Dépend de la disponibilité des services externes (IA, TTS)
-- ⚠️ Performance dépend de la latence réseau (version standard) ou du hardware local (version open source)
-- ⚠️ Utilisation des ressources peut limiter l'usage à grande échelle (version open source)
+#### Technical Limitations
+- ⚠️ Depends on availability of external services (AI, TTS)
+- ⚠️ Performance depends on network latency (standard) or local hardware (open source)
+- ⚠️ Resource usage can limit large-scale usage (open source)
 
-#### Limitations Fonctionnelles
-- ⚠️ Qualité des réponses dépend des modèles IA utilisés
-- ⚠️ Disponibilité dépend des services (cloud ou infrastructure locale)
+#### Functional Limitations
+- ⚠️ Response quality depends on the AI models used
+- ⚠️ Availability depends on services (cloud or local infrastructure)
 
 ---
 
-## 7. Boundaries de Coût/Ressources
+## 7. Cost/Resource Boundaries
 
-### 7.1 Optimisation
+### 7.1 Optimization
 
-#### Stratégies Implémentées
-- ✅ Utilisation de modèles économiques/performants en priorité
-- ✅ Cache des réponses fréquentes
-- ✅ Montée en charge intelligente (modèles avancés si nécessaire)
-- ✅ Tracking précis de l'utilisation
+#### Implemented Strategies
+- ✅ Prioritize cost-effective/performance models
+- ✅ Cache frequent responses
+- ✅ Intelligent scaling (advanced models when needed)
+- ✅ Precise usage tracking
 
 ### 7.2 Limitations
 
-#### Coûts/Ressources Externes
-**Version Standard**:
-- ⚠️ Coûts des services IA (OpenAI, Anthropic)
-- ⚠️ Coûts des services vocaux (ElevenLabs, Azure)
-- ⚠️ Coûts de l'infrastructure cloud
-- ⚠️ Coûts de la base de données vectorielle
+#### External Costs/Resources
+**Standard Version**:
+- ⚠️ AI service costs (OpenAI, Anthropic)
+- ⚠️ Voice service costs (ElevenLabs, Azure)
+- ⚠️ Cloud infrastructure costs
+- ⚠️ Vector database costs
 
-**Version Open Source**:
-- ⚠️ Coûts de l'infrastructure (serveurs)
-- ⚠️ Utilisation des ressources (CPU, GPU, mémoire)
-- ⚠️ Maintenance de l'infrastructure
+**Open Source Version**:
+- ⚠️ Infrastructure costs (servers)
+- ⚠️ Resource usage (CPU, GPU, memory)
+- ⚠️ Infrastructure maintenance
 
-#### Contrôle
-- ✅ Le système peut limiter l'usage par utilisateur
-- ✅ Le système peut mettre en cache pour réduire les appels
-- ❌ Le système ne contrôle pas les prix des services externes (version standard)
-- ❌ Le système ne contrôle pas les limites du hardware (version open source)
+#### Control
+- ✅ The system can limit usage per user
+- ✅ The system can cache to reduce calls
+- ❌ The system does not control external service pricing (standard)
+- ❌ The system does not control hardware limits (open source)
 
 ---
 
-## 8. Boundaries d'Intégration
+## 8. Integration Boundaries
 
-### 8.1 Intégrations Supportées
+### 8.1 Supported Integrations
 
 #### Frontend
-- ✅ Intégration JavaScript/TypeScript vanilla
-- ✅ Intégration React
-- ✅ Intégration via SDK
-- ✅ Intégration via widget
+- ✅ Vanilla JavaScript/TypeScript integration
+- ✅ React integration
+- ✅ SDK integration
+- ✅ Widget integration
 
 #### Backend
-- ✅ APIs REST
-- ✅ WebSocket pour temps réel
-- ✅ Webhooks (futur)
+- ✅ REST APIs
+- ✅ WebSocket for real-time
+- ✅ Webhooks (future)
 
-### 8.2 Limitations d'Intégration
+### 8.2 Integration Limitations
 
-#### Non Supporté Actuellement
-- ❌ Intégration native mobile (SDK séparé requis)
-- ❌ Intégration avec systèmes legacy spécifiques
-- ❌ Intégration avec ERP/CRM (futur)
-
----
-
-## 9. Boundaries Évolutifs
-
-### 9.1 Extensions Futures Possibles
-
-#### Fonctionnalités Potentielles
-- 🔮 Support multi-langues
-- 🔮 Intégration calendrier pour rappels
-- 🔮 Analytics avancés pour utilisateurs
-- 🔮 API publique pour développeurs tiers
-- 🔮 Fine-tuning de modèles pour le domaine bien-être
-
-### 9.2 Limitations Évolutives
-
-#### Contraintes
-- ⚠️ Évolution dépend des capacités des modèles IA
-- ⚠️ Évolution dépend des budgets et ressources
-- ⚠️ Évolution doit respecter les boundaries de domaine (pas de médical)
+#### Not Currently Supported
+- ❌ Native mobile integration (separate SDK required)
+- ❌ Integration with specific legacy systems
+- ❌ ERP/CRM integration (future)
 
 ---
 
-## 10. Règles de Décision
+## 9. Evolving Boundaries
 
-### 10.1 Quand Ajouter une Fonctionnalité
+### 9.1 Possible Future Extensions
 
-**AJOUTER si**:
-- ✅ S'inscrit dans le domaine du bien-être
-- ✅ Améliore l'expérience utilisateur
-- ✅ Respecte les boundaries de sécurité
-- ✅ Est techniquement faisable
-- ✅ Respecte le budget/ressources
+#### Potential Features
+- 🔮 Multi-language support
+- 🔮 Calendar integration for reminders
+- 🔮 Advanced user analytics
+- 🔮 Public API for third-party developers
+- 🔮 Model fine-tuning for the well-being domain
 
-**NE PAS AJOUTER si**:
-- ❌ Sort du domaine du bien-être (sans redirection)
-- ❌ Implique des données médicales sensibles
-- ❌ Compromet la sécurité
-- ❌ Coûts/ressources prohibitifs
-- ❌ Complexité technique excessive
+### 9.2 Evolution Constraints
 
-### 10.2 Quand Rediriger
-
-**REDIRIGER vers professionnel si**:
-- ⚠️ Question médicale détectée
-- ⚠️ Question légale complexe
-- ⚠️ Question financière nécessitant expertise
-- ⚠️ Question hors domaine du bien-être
+#### Constraints
+- ⚠️ Evolution depends on AI model capabilities
+- ⚠️ Evolution depends on budgets and resources
+- ⚠️ Evolution must respect domain boundaries (no medical)
 
 ---
 
-## 11. Exemples de Boundaries en Action
+## 10. Decision Rules
 
-### 11.1 Exemple 1: Question Bien-être ✅
+### 10.1 When to Add a Feature
 
-**Question**: "Comment puis-je améliorer ma pratique de méditation?"
+**ADD if**:
+- ✅ Fits within the well-being domain
+- ✅ Improves user experience
+- ✅ Respects security boundaries
+- ✅ Is technically feasible
+- ✅ Respects budget/resources
 
-**Réponse du Système**:
-- ✅ Traite la question (dans le domaine)
-- ✅ Fournit des conseils sur la méditation
-- ✅ Peut recommander des livres
-- ✅ Enregistre dans l'historique
+**DO NOT ADD if**:
+- ❌ Out of the well-being domain (without redirection)
+- ❌ Involves sensitive medical data
+- ❌ Compromises security
+- ❌ Prohibitive cost/resource use
+- ❌ Excessive technical complexity
 
-### 11.2 Exemple 2: Question Médicale ⚠️
+### 10.2 When to Redirect
 
-**Question**: "J'ai mal à la tête depuis 3 jours, que dois-je faire?"
-
-**Réponse du Système**:
-- ⚠️ Détecte la question médicale
-- ⚠️ Répond avec disclaimer: "Je ne suis pas un professionnel de santé..."
-- ⚠️ Redirige vers un médecin
-- ⚠️ N'enregistre PAS de diagnostic ou conseil médical
-
-### 11.3 Exemple 3: Question Hors Domaine ❌
-
-**Question**: "Comment créer une entreprise?"
-
-**Réponse du Système**:
-- ❌ Détecte que c'est hors domaine bien-être
-- ❌ Répond poliment: "Je me concentre sur le bien-être..."
-- ❌ Peut rediriger vers des ressources appropriées
-- ❌ N'enregistre pas comme conversation bien-être
+**REDIRECT to a professional if**:
+- ⚠️ Medical question detected
+- ⚠️ Complex legal question
+- ⚠️ Financial question requiring expertise
+- ⚠️ Question outside the well-being domain
 
 ---
 
-## 12. Maintenance des Boundaries
+## 11. Boundary Examples in Action
 
-### 12.1 Révision Périodique
+### 11.1 Example 1: Well-being Question ✅
 
-- **Fréquence**: Trimestrielle
-- **Participants**: Équipe technique, product owner
-- **Objectif**: Vérifier que les boundaries sont toujours appropriées
+**Question**: "How can I improve my meditation practice?"
+
+**System Response**:
+- ✅ Handles the question (in scope)
+- ✅ Provides meditation advice
+- ✅ May recommend books
+- ✅ Stores in history
+
+### 11.2 Example 2: Medical Question ⚠️
+
+**Question**: "I've had a headache for 3 days, what should I do?"
+
+**System Response**:
+- ⚠️ Detects a medical question
+- ⚠️ Responds with disclaimer: "I am not a healthcare professional..."
+- ⚠️ Redirects to a doctor
+- ⚠️ Does NOT record medical diagnosis or advice
+
+### 11.3 Example 3: Out-of-Scope Question ❌
+
+**Question**: "How do I start a company?"
+
+**System Response**:
+- ❌ Detects it's out of the well-being domain
+- ❌ Responds politely: "I focus on well-being..."
+- ❌ May redirect to appropriate resources
+- ❌ Does not store as a well-being conversation
+
+---
+
+## 12. Boundary Maintenance
+
+### 12.1 Periodic Review
+
+- **Frequency**: Quarterly
+- **Participants**: Engineering team, product owner
+- **Goal**: Ensure boundaries remain appropriate
 
 ### 12.2 Documentation
 
-- **Mise à jour**: Lors de changements majeurs
-- **Versioning**: Suivi des versions de ce document
-- **Communication**: Partage avec toute l'équipe
+- **Updates**: On major changes
+- **Versioning**: Track versions of this document
+- **Communication**: Share with the whole team
 
 ---
 
 ## 13. Conclusion
 
-Les boundaries définies dans ce document garantissent que:
-- ✅ Le système reste focalisé sur son domaine (bien-être)
-- ✅ La sécurité et la confidentialité sont respectées
-- ✅ Les utilisateurs reçoivent des réponses appropriées
-- ✅ Le système peut évoluer de manière contrôlée
-- ✅ Les coûts/ressources sont maîtrisés
+The boundaries defined in this document ensure that:
+- ✅ The system remains focused on its domain (well-being)
+- ✅ Security and privacy are respected
+- ✅ Users receive appropriate responses
+- ✅ The system can evolve in a controlled way
+- ✅ Costs/resources are managed
 
-Ces boundaries doivent être respectées lors du développement de nouvelles fonctionnalités, quelle que soit la version (standard ou open source).
+These boundaries must be respected when developing new features, regardless of version (standard or open source).
 
 ---
 
-**Note**: Ces boundaries sont communes aux deux versions. Les implémentations techniques peuvent différer, mais les limites fonctionnelles et de domaine restent identiques.
+**Note**: These boundaries are shared across both versions. Technical implementations may differ, but functional and domain limits remain the same.
