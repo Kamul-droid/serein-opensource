@@ -32,10 +32,17 @@ async function setupApp() {
   });
   await app.register(swagger, {
     openapi: {
-      info: {
-        title: 'Auth service API',
-        version: '1.0.0',
+      info: {},
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
       },
+      security: [{ bearerAuth: [] }],
     },
   });
 
@@ -129,4 +136,5 @@ process.on('SIGINT', async () => {
 });
 
 start();
+
 
