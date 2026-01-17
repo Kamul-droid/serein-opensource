@@ -107,14 +107,12 @@ services:
 
   # Whisper (Speech-to-Text)
   whisper:
-    build:
-      context: ./services/voice-service/whisper
-      dockerfile: Dockerfile
+    image: ghcr.io/guillaumekln/faster-whisper:latest
     container_name: serein-whisper
     ports:
       - "5003:5003"
-    volumes:
-      - whisper_models:/app/models
+    environment:
+      - MODEL=base
     # Uncomment if you have GPU support
     # deploy:
     #   resources:
@@ -130,6 +128,36 @@ services:
       retries: 3
     networks:
       - serein-network
+
+  # Voice Service
+  voice-service:
+    build:
+      context: ./services/voice-service
+      dockerfile: Dockerfile
+    container_name: serein-voice-service
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=3006
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
+      - COQUI_TTS_URL=${COQUI_TTS_URL:-http://coqui-tts:5002}
+      - COQUI_TTS_DEFAULT_VOICE=${COQUI_TTS_DEFAULT_VOICE:-tts_models/en/ljspeech/tacotron2-DDC}
+      - WHISPER_URL=${WHISPER_URL:-http://whisper:5003}
+      - WHISPER_MODEL=${WHISPER_MODEL:-base}
+    depends_on:
+      coqui-tts:
+        condition: service_healthy
+      whisper:
+        condition: service_healthy
+    networks:
+      - serein-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # Auth Service
   auth-service:
@@ -296,6 +324,7 @@ services:
       - conversation-service
       - ai-service
       - content-service
+      - voice-service
     networks:
       - serein-network
 
