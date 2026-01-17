@@ -2,6 +2,8 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
 import { registerUserRoutes } from './routes/user.routes';
@@ -28,6 +30,26 @@ async function setupApp() {
     max: 100,
     timeWindow: '1 minute',
   });
+  await app.register(swagger, {
+    openapi: {
+      info: {
+        title: 'User service API',
+        version: '1.0.0',
+      },
+    },
+  });
+
+  await app.register(swaggerUi, {
+    routePrefix: '/docs',
+    uiConfig: {
+      docExpansion: 'list',
+      deepLinking: false,
+    },
+    staticCSP: true,
+    transformSpecificationClone: true,
+  });
+
+  app.get('/docs/json', async () => app.swagger());
 
   // Health check
   app.get('/health', async (request, reply) => {
@@ -104,3 +126,4 @@ process.on('SIGINT', async () => {
 });
 
 start();
+
