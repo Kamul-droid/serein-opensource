@@ -74,16 +74,42 @@ export default function ChatPage() {
           type?: string;
           content?: string;
           message?: string;
+          delta?: string;
         };
+        if (payload.type === 'assistant_chunk' && payload.delta) {
+          setMessages((prev) => {
+            const last = prev[prev.length - 1];
+            if (last && last.role === 'assistant' && last.id.startsWith('stream-')) {
+              return [
+                ...prev.slice(0, -1),
+                { ...last, content: `${last.content}${payload.delta}` },
+              ];
+            }
+            return [
+              ...prev,
+              {
+                id: `stream-${Date.now()}`,
+                role: 'assistant',
+                content: payload.delta,
+              },
+            ];
+          });
+        }
         if (payload.type === 'assistant' && payload.content) {
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: `assistant-${Date.now()}`,
-              role: 'assistant',
-              content: payload.content,
-            },
-          ]);
+          setMessages((prev) => {
+            const last = prev[prev.length - 1];
+            if (last && last.role === 'assistant' && last.id.startsWith('stream-')) {
+              return [...prev.slice(0, -1), { ...last, content: payload.content }];
+            }
+            return [
+              ...prev,
+              {
+                id: `assistant-${Date.now()}`,
+                role: 'assistant',
+                content: payload.content,
+              },
+            ];
+          });
         }
         if (payload.type === 'error') {
           setError(payload.message || 'Streaming error');

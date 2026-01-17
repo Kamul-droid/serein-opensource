@@ -20,6 +20,7 @@ import { config } from '../config';
 import { createLogger } from '@serein/shared/utils/logger';
 
 const logger = createLogger('conversation-service:stream');
+const decoder = new TextDecoder();
 
 /**
  * Register conversation routes
@@ -116,7 +117,7 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
           try {
             await createMessage(userId, params.id, { role: 'user', content });
             const history = await listRecentMessages(userId, params.id, 20);
-            const aiResponse = await fetch(`${config.services.aiUrl}/ai/chat`, {
+            const aiResponse = await fetch(`${config.services.aiUrl}/ai/chat/stream`, {
               method: 'POST',
               headers: {
                 'content-type': 'application/json',
@@ -133,16 +134,82 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
               throw new Error(`AI service error (${aiResponse.status}): ${text}`);
             }
 
-            const data = (await aiResponse.json()) as { message?: string };
-            if (data.message) {
-              await createMessage(userId, params.id, { role: 'assistant', content: data.message });
+            if (!aiResponse.body) {
+              throw new Error('AI stream missing body');
+            }
+
+            let fullContent = '';
+            let buffer = '';
+            const reader = aiResponse.body.getReader();
+
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) {
+                break;
+              }
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() || '';
+
+              for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed) {
+                  continue;
+                }
+                try {
+                  const payload = JSON.parse(trimmed) as {
+                    message?: { content?: string };
+                    response?: string;
+                    done?: boolean;
+                  };
+                  const delta = payload.message?.content ?? payload.response ?? '';
+                  if (delta) {
+                    fullContent += delta;
+                    connection.socket.send(
+                      JSON.stringify({
+                        type: 'assistant_chunk',
+                        conversationId: params.id,
+                        delta,
+                      })
+                    );
+                  }
+                } catch (parseError) {
+                  logger.warn({ parseError, line: trimmed }, 'Failed to parse AI chunk');
+                }
+              }
+            }
+
+            if (buffer.trim()) {
+              try {
+                const payload = JSON.parse(buffer) as {
+                  message?: { content?: string };
+                  response?: string;
+                };
+                const delta = payload.message?.content ?? payload.response ?? '';
+                if (delta) {
+                  fullContent += delta;
+                  connection.socket.send(
+                    JSON.stringify({
+                      type: 'assistant_chunk',
+                      conversationId: params.id,
+                      delta,
+                    })
+                  );
+                }
+              } catch (error) {
+                logger.warn({ error, buffer }, 'Failed to parse trailing AI chunk');
+              }
+            }
+
+            if (fullContent) {
+              await createMessage(userId, params.id, { role: 'assistant', content: fullContent });
             }
 
             connection.socket.send(
               JSON.stringify({
                 type: 'assistant',
                 conversationId: params.id,
-                content: data.message ?? '',
+                content: fullContent,
               })
             );
           } catch (error) {
