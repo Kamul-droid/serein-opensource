@@ -117,7 +117,7 @@ export const streamSynthesizeSpeech = async (
   }
 
   const contentType = response.headers.get('content-type') || 'audio/wav';
-  const stream = Readable.fromWeb(response.body as ReadableStream<Uint8Array>);
+  const stream = Readable.from(response.body as unknown as AsyncIterable<Uint8Array>);
   return { stream, contentType };
 };
 

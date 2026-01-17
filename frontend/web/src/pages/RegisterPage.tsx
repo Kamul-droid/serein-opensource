@@ -37,6 +37,7 @@ export default function RegisterPage() {
           className="input"
           type="text"
           placeholder="Name"
+          style={{ color: 'rgb(27, 27, 29)' }}
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
@@ -44,6 +45,7 @@ export default function RegisterPage() {
           className="input"
           type="email"
           placeholder="Email"
+          style={{ color: 'rgb(16, 15, 15)' }}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           required
@@ -52,6 +54,7 @@ export default function RegisterPage() {
           className="input"
           type="password"
           placeholder="Password"
+          style={{ color: 'rgb(26, 25, 25)' }}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           required

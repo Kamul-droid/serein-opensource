@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { authenticate } from '../middleware/auth.middleware';
 import { validate, bookIdSchema, paginationSchema, searchSchema, recommendationsSchema } from '../utils/validation';
 import { getBook, getRecommendations, listBooks, searchContent } from '../services/content.service';
+import { PaginationQuery, RecommendationsRequest, SearchRequest } from '../types';
 
 const contentTags = ['Content'];
 const errorResponseSchema = {
@@ -53,7 +54,7 @@ export async function registerContentRoutes(fastify: FastifyInstance): Promise<v
     },
     async (request, reply) => {
       const userId = request.user!.id;
-      const query = validate(paginationSchema, request.query);
+      const query = validate(paginationSchema, request.query) as PaginationQuery;
       const books = await listBooks(userId, query);
       return reply.send(books);
     }
@@ -118,7 +119,7 @@ export async function registerContentRoutes(fastify: FastifyInstance): Promise<v
     },
     async (request, reply) => {
       const userId = request.user!.id;
-      const data = validate(searchSchema, request.body);
+      const data = validate(searchSchema, request.body) as SearchRequest;
       const results = await searchContent(userId, data);
       return reply.send({ results });
     }
@@ -154,7 +155,7 @@ export async function registerContentRoutes(fastify: FastifyInstance): Promise<v
     },
     async (request, reply) => {
       const userId = request.user!.id;
-      const data = validate(recommendationsSchema, request.body);
+      const data = validate(recommendationsSchema, request.body) as RecommendationsRequest;
       const results = await getRecommendations(userId, data);
       return reply.send({ results });
     }

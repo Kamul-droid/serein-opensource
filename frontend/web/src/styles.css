@@ -82,6 +82,7 @@ textarea {
   border-radius: 12px;
   border: 1px solid #cbd5f5;
   background: #f8fafc;
+  color: rgba(26, 25, 25, 1);
 }
 
 .button {

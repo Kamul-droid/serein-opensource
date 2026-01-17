@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { authenticate } from '../middleware/auth.middleware';
 import { validate, chatRequestSchema } from '../utils/validation';
 import { chat, getAvailableModels, streamChat } from '../services/ai.service';
+import { ChatRequest } from '../types';
 
 const aiTags = ['AI'];
 const errorResponseSchema = {
@@ -104,7 +105,7 @@ export async function registerAiRoutes(fastify: FastifyInstance): Promise<void> 
       },
     },
     async (request, reply) => {
-      const data = validate(chatRequestSchema, request.body);
+      const data = validate(chatRequestSchema, request.body) as ChatRequest;
       const response = await chat(data);
       return reply.send(response);
     }
@@ -127,7 +128,7 @@ export async function registerAiRoutes(fastify: FastifyInstance): Promise<void> 
       },
     },
     async (request, reply) => {
-      const data = validate(chatRequestSchema, request.body);
+      const data = validate(chatRequestSchema, request.body) as ChatRequest;
       const result = await streamChat(data);
 
       reply.raw.writeHead(200, {

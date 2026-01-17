@@ -32,7 +32,10 @@ async function setupApp() {
   });
   await app.register(swagger, {
     openapi: {
-      info: {},
+      info: {
+        title: 'Serein User Service',
+        version: '1.0.0',
+      },
       components: {
         securitySchemes: {
           bearerAuth: {
@@ -59,7 +62,7 @@ async function setupApp() {
   app.get('/docs/json', async () => app.swagger());
 
   // Health check
-  app.get('/health', async (request, reply) => {
+  app.get('/health', async (_request, reply) => {
     try {
       // Check database connection
       await prisma.$queryRaw`SELECT 1`;
@@ -92,11 +95,17 @@ async function setupApp() {
 app.setErrorHandler((error, request, reply) => {
   logger.error({ error, url: request.url }, 'Request error');
 
-  if (error.statusCode) {
-    return reply.code(error.statusCode).send({
+  const typedError = error as {
+    statusCode?: number;
+    code?: string;
+    details?: Record<string, unknown>;
+  };
+
+  if (typedError.statusCode) {
+    return reply.code(typedError.statusCode).send({
       error: error.message,
-      code: error.code,
-      details: error.details,
+      code: typedError.code,
+      details: typedError.details,
     });
   }
 

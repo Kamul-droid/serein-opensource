@@ -48,7 +48,14 @@ export default function VoicePage() {
         if (done) break;
         if (value) chunks.push(value);
       }
-      const blob = new Blob(chunks, { type: response.headers.get('content-type') || 'audio/wav' });
+      const parts: BlobPart[] = chunks.map(
+        (chunk) =>
+          chunk.buffer.slice(
+            chunk.byteOffset,
+            chunk.byteOffset + chunk.byteLength
+          ) as ArrayBuffer
+      );
+      const blob = new Blob(parts, { type: response.headers.get('content-type') || 'audio/wav' });
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
     } catch (err) {

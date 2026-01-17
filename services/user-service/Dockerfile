@@ -2,15 +2,22 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY prisma ./prisma/
+# Copy shared package and base config
+COPY shared ./shared
+COPY tsconfig.base.json ./tsconfig.base.json
+
+# Build shared package
+WORKDIR /app/shared
+RUN npm install
+RUN npm run build
+
+# Copy service source
+WORKDIR /app
+COPY services/user-service ./services/user-service
 
 # Install dependencies
+WORKDIR /app/services/user-service
 RUN npm install
-
-# Copy source code
-COPY . .
 
 # Generate Prisma client
 RUN npx prisma generate
@@ -23,16 +30,18 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY prisma ./prisma/
+# Copy shared package (built) and service package files
+COPY --from=builder /app/shared ./shared
+COPY services/user-service/package*.json ./services/user-service/
+COPY services/user-service/prisma ./services/user-service/prisma/
 
 # Install production dependencies only
+WORKDIR /app/services/user-service
 RUN npm install --omit=dev
 
 # Copy built files
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/services/user-service/dist ./dist
+COPY --from=builder /app/services/user-service/node_modules/.prisma ./node_modules/.prisma
 
 # Generate Prisma client
 RUN npx prisma generate

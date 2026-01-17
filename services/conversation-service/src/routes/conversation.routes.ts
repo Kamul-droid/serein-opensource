@@ -15,6 +15,7 @@ import {
   paginationSchema,
   createMessageSchema,
 } from '../utils/validation';
+import { PaginationQuery } from '../types';
 import { authenticate } from '../middleware/auth.middleware';
 import { config } from '../config';
 import { createLogger } from '@serein/shared/utils/logger';
@@ -112,7 +113,7 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
     },
     async (request, reply) => {
       const userId = request.user!.id;
-      const query = validate(paginationSchema, request.query);
+      const query = validate(paginationSchema, request.query) as PaginationQuery;
       const conversations = await listConversations(userId, query);
       return reply.send(conversations);
     }
@@ -250,7 +251,7 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
     async (request, reply) => {
       const userId = request.user!.id;
       const params = validate(conversationIdSchema, request.params);
-      const query = validate(paginationSchema, request.query);
+      const query = validate(paginationSchema, request.query) as PaginationQuery;
       const messages = await listMessages(userId, params.id, query);
       return reply.send(messages);
     }
@@ -294,7 +295,7 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
           })
         );
 
-        connection.socket.on('message', async (message) => {
+        connection.socket.on('message', async (message: Buffer) => {
           const raw = message.toString();
           let content = raw;
           try {

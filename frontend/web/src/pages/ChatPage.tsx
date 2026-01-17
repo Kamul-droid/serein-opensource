@@ -76,13 +76,14 @@ export default function ChatPage() {
           message?: string;
           delta?: string;
         };
-        if (payload.type === 'assistant_chunk' && payload.delta) {
+        if (payload.type === 'assistant_chunk' && typeof payload.delta === 'string') {
+          const delta = payload.delta;
           setMessages((prev) => {
             const last = prev[prev.length - 1];
             if (last && last.role === 'assistant' && last.id.startsWith('stream-')) {
               return [
                 ...prev.slice(0, -1),
-                { ...last, content: `${last.content}${payload.delta}` },
+                { ...last, content: `${last.content}${delta}` },
               ];
             }
             return [
@@ -90,23 +91,24 @@ export default function ChatPage() {
               {
                 id: `stream-${Date.now()}`,
                 role: 'assistant',
-                content: payload.delta,
+                content: delta,
               },
             ];
           });
         }
-        if (payload.type === 'assistant' && payload.content) {
+        if (payload.type === 'assistant' && typeof payload.content === 'string') {
+          const content = payload.content;
           setMessages((prev) => {
             const last = prev[prev.length - 1];
             if (last && last.role === 'assistant' && last.id.startsWith('stream-')) {
-              return [...prev.slice(0, -1), { ...last, content: payload.content }];
+              return [...prev.slice(0, -1), { ...last, content }];
             }
             return [
               ...prev,
               {
                 id: `assistant-${Date.now()}`,
                 role: 'assistant',
-                content: payload.content,
+                content,
               },
             ];
           });
