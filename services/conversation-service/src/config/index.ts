@@ -13,6 +13,9 @@ export const config = {
   cors: {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   },
+  services: {
+    aiUrl: process.env.AI_SERVICE_URL || 'http://localhost:3004',
+  },
   events: {
     secret: process.env.INTERNAL_EVENT_SECRET || '',
   },

@@ -6,6 +6,7 @@ import {
   deleteConversation,
   createMessage,
   listMessages,
+  listRecentMessages,
 } from '../services/conversation.service';
 import {
   validate,
@@ -15,6 +16,10 @@ import {
   createMessageSchema,
 } from '../utils/validation';
 import { authenticate } from '../middleware/auth.middleware';
+import { config } from '../config';
+import { createLogger } from '@serein/shared/utils/logger';
+
+const logger = createLogger('conversation-service:stream');
 
 /**
  * Register conversation routes
@@ -86,6 +91,7 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
       try {
         const params = validate(conversationIdSchema, request.params);
         await getConversation(userId, params.id);
+        const authorization = request.headers.authorization;
 
         connection.socket.send(
           JSON.stringify({
@@ -95,16 +101,60 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
           })
         );
 
-        connection.socket.on('message', (message) => {
-          const content = message.toString();
-          // TODO: Replace echo with AI streaming integration.
-          connection.socket.send(
-            JSON.stringify({
-              type: 'echo',
-              conversationId: params.id,
-              content,
-            })
-          );
+        connection.socket.on('message', async (message) => {
+          const raw = message.toString();
+          let content = raw;
+          try {
+            const parsed = JSON.parse(raw) as { content?: string };
+            if (parsed?.content) {
+              content = parsed.content;
+            }
+          } catch (error) {
+            // Non-JSON payload, treat as plain content.
+          }
+
+          try {
+            await createMessage(userId, params.id, { role: 'user', content });
+            const history = await listRecentMessages(userId, params.id, 20);
+            const aiResponse = await fetch(`${config.services.aiUrl}/ai/chat`, {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/json',
+                ...(authorization ? { authorization } : {}),
+              },
+              body: JSON.stringify({
+                messages: history.map((msg) => ({ role: msg.role, content: msg.content })),
+                conversationId: params.id,
+              }),
+            });
+
+            if (!aiResponse.ok) {
+              const text = await aiResponse.text();
+              throw new Error(`AI service error (${aiResponse.status}): ${text}`);
+            }
+
+            const data = (await aiResponse.json()) as { message?: string };
+            if (data.message) {
+              await createMessage(userId, params.id, { role: 'assistant', content: data.message });
+            }
+
+            connection.socket.send(
+              JSON.stringify({
+                type: 'assistant',
+                conversationId: params.id,
+                content: data.message ?? '',
+              })
+            );
+          } catch (error) {
+            logger.error({ error }, 'AI stream handling failed');
+            connection.socket.send(
+              JSON.stringify({
+                type: 'error',
+                conversationId: params.id,
+                message: 'Unable to process AI response at this time.',
+              })
+            );
+          }
         });
       } catch (error) {
         connection.socket.close(1008, 'Unauthorized');

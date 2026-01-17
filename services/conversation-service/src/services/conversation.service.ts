@@ -119,3 +119,19 @@ export async function listMessages(
     skip: offset,
   });
 }
+
+export async function listRecentMessages(
+  userId: string,
+  conversationId: string,
+  limit: number = 20
+) {
+  await requireConversation(userId, conversationId);
+
+  const messages = await prisma.message.findMany({
+    where: { conversationId },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+  });
+
+  return messages.reverse();
+}

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 let prismaMock: {
   conversation: {
     findFirst: jest.Mock;
@@ -32,6 +34,7 @@ jest.mock('@prisma/client', () => {
 
 const {
   createConversation,
+  provisionUserConversations,
   listConversations,
   getConversation,
   deleteConversation,
@@ -71,6 +74,33 @@ describe('Conversation Service', () => {
       skip: 0,
     });
     expect(result).toHaveLength(1);
+  });
+
+  it('provisions a welcome conversation when none exists', async () => {
+    prismaMock.conversation.findFirst.mockResolvedValue(null);
+    prismaMock.conversation.create.mockResolvedValue({
+      id: 'conv-1',
+      userId: 'user-1',
+      title: 'Welcome',
+    });
+
+    await provisionUserConversations('user-1');
+
+    expect(prismaMock.conversation.create).toHaveBeenCalledWith({
+      data: { userId: 'user-1', title: 'Welcome' },
+    });
+  });
+
+  it('skips provisioning when a conversation exists', async () => {
+    prismaMock.conversation.findFirst.mockResolvedValue({
+      id: 'conv-1',
+      userId: 'user-1',
+      title: 'Existing',
+    });
+
+    await provisionUserConversations('user-1');
+
+    expect(prismaMock.conversation.create).not.toHaveBeenCalled();
   });
 
   it('gets a conversation when owned by user', async () => {

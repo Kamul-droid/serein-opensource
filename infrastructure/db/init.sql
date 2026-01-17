@@ -9,5 +9,8 @@ BEGIN
   IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'serein_conversation') THEN
     CREATE DATABASE serein_conversation;
   END IF;
+  IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'serein_content') THEN
+    CREATE DATABASE serein_content;
+  END IF;
 END
 $$;
