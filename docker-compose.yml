@@ -36,6 +36,18 @@ services:
     networks:
       - serein-network
 
+  # Redis Exporter (Prometheus)
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: serein-redis-exporter
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - serein-network
+
   # Weaviate Vector Database
   weaviate:
     image: semitechnologies/weaviate:latest
@@ -59,6 +71,18 @@ services:
     networks:
       - serein-network
 
+  # PostgreSQL Exporter (Prometheus)
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: serein-postgres-exporter
+    environment:
+      - DATA_SOURCE_NAME=postgresql://serein:serein_dev_password@postgres:5432/postgres?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - serein-network
+
   # Ollama (LLM Open Source)
   ollama:
     image: ollama/ollama:latest
@@ -69,6 +93,11 @@ services:
       - ollama_data:/root/.ollama
     environment:
       - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_PULL_MODELS=${OLLAMA_PULL_MODELS:-phi}
+    entrypoint: ["/bin/sh"]
+    command:
+      - "-c"
+      - "set -e; ollama serve & server_pid=$$!; i=0; until ollama list >/dev/null 2>&1; do i=$$((i+1)); if [ $$i -ge 60 ]; then echo \"Ollama failed to start\"; exit 1; fi; sleep 1; done; for model in $$(echo $${OLLAMA_PULL_MODELS:-phi} | tr ',' ' '); do echo \"Pulling model: $$model\"; ollama pull $$model; done; wait $$server_pid"
     # Uncomment if you have GPU support
     # deploy:
     #   resources:
@@ -275,9 +304,9 @@ services:
       - PORT=3004
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
-      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
-      - OLLAMA_DEFAULT_MODEL=${OLLAMA_DEFAULT_MODEL:-llama2}
-      - OLLAMA_LIGHT_MODELS=${OLLAMA_LIGHT_MODELS:-phi,mistral}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_DEFAULT_MODEL=phi
+      - OLLAMA_LIGHT_MODELS=phi
       - OLLAMA_HEAVY_MODELS=${OLLAMA_HEAVY_MODELS:-llama2,mistral-large}
       - AI_DOMAIN_STRICT=${AI_DOMAIN_STRICT:-true}
     depends_on:
@@ -351,6 +380,8 @@ services:
     build:
       context: .
       dockerfile: frontend/web/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:5173
     container_name: serein-frontend-web
     ports:
       - "5173:3000"

@@ -39,11 +39,70 @@ type VoiceList = {
   voices?: Array<{ id: string; name: string }>;
 };
 
+type ChatRequest = {
+  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
+  conversationId?: string;
+  model?: string;
+  temperature?: number;
+  userContext?: { beliefs?: string[]; interests?: string[] };
+};
+
+type ChatResponse = {
+  message: string;
+  model: string;
+  usage?: {
+    promptTokens?: number;
+    completionTokens?: number;
+    totalTokens?: number;
+  };
+  metadata?: Record<string, unknown>;
+};
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const ACCESS_TOKEN_KEY = 'serein_access_token';
+const REFRESH_TOKEN_KEY = 'serein_refresh_token';
 
-const getAccessToken = () => localStorage.getItem('serein_access_token');
+const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
+const getRefreshToken = () => localStorage.getItem(REFRESH_TOKEN_KEY);
 
-const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
+const clearTokens = () => {
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  window.dispatchEvent(new Event('serein:auth-updated'));
+};
+
+const refreshAccessToken = async (): Promise<boolean> => {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    clearTokens();
+    return false;
+  }
+
+  const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({ refreshToken }),
+  });
+
+  if (!response.ok) {
+    clearTokens();
+    return false;
+  }
+
+  const data = (await response.json()) as { accessToken?: string };
+  if (!data.accessToken) {
+    clearTokens();
+    return false;
+  }
+
+  localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
+  window.dispatchEvent(new Event('serein:auth-updated'));
+  return true;
+};
+
+const buildHeaders = (init?: RequestInit): Record<string, string> => {
   const headers: Record<string, string> = {
     'content-type': 'application/json',
     ...(init?.headers as Record<string, string> | undefined),
@@ -52,11 +111,32 @@ const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   if (accessToken) {
     headers.authorization = `Bearer ${accessToken}`;
   }
+  return headers;
+};
 
+export const authFetch = async (
+  path: string,
+  init?: RequestInit,
+  retry = true
+): Promise<Response> => {
+  const headers = buildHeaders(init);
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers,
   });
+
+  if (response.status === 401 && retry) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      return authFetch(path, init, false);
+    }
+  }
+
+  return response;
+};
+
+const request = async <T>(path: string, init?: RequestInit, retry = true): Promise<T> => {
+  const response = await authFetch(path, init, retry);
 
   if (!response.ok) {
     const contentType = response.headers.get('content-type') || '';
@@ -125,4 +205,9 @@ export const api = {
       body: JSON.stringify(payload),
     }),
   listVoices: () => request<VoiceList>('/voice/voices'),
+  chat: (payload: ChatRequest) =>
+    request<ChatResponse>('/ai/chat', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
 };

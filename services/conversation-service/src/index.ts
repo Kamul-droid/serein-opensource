@@ -7,12 +7,14 @@ import swaggerUi from '@fastify/swagger-ui';
 import websocket from '@fastify/websocket';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
+import { createMetrics } from '@serein/shared/utils/metrics';
 import { attachProcessHandlers, logStartupInfo } from '@serein/shared/utils/startup';
 import { registerConversationRoutes } from './routes/conversation.routes';
 import { registerInternalRoutes } from './routes/internal.routes';
 import { PrismaClient } from '@prisma/client';
 
 const logger = createLogger('conversation-service');
+const metrics = createMetrics('conversation-service');
 const prisma = new PrismaClient();
 attachProcessHandlers(logger, 'conversation-service');
 
@@ -64,6 +66,45 @@ async function setupApp() {
   app.get('/docs/openapi.json', async () => app.swagger());
 
   await app.register(websocket);
+
+  app.get('/metrics', async (_request, reply) => {
+    reply.header('Content-Type', metrics.register.contentType);
+    return reply.send(await metrics.register.metrics());
+  });
+
+  app.addHook('onRequest', async (request) => {
+    (request as { metricsStart?: [number, number] }).metricsStart = process.hrtime();
+  });
+
+  app.addHook('onResponse', async (request, reply) => {
+    const start = (request as { metricsStart?: [number, number] }).metricsStart;
+    if (!start) {
+      return;
+    }
+
+    const diff = process.hrtime(start);
+    const durationSeconds = diff[0] + diff[1] / 1e9;
+    const route = request.routeOptions?.url ?? request.routerPath ?? request.url;
+
+    if (route === '/metrics') {
+      return;
+    }
+
+    const statusCode = reply.statusCode?.toString() ?? '0';
+    metrics.httpRequestsTotal.inc({
+      method: request.method,
+      route,
+      status_code: statusCode,
+    });
+    metrics.httpRequestDurationSeconds.observe(
+      {
+        method: request.method,
+        route,
+        status_code: statusCode,
+      },
+      durationSeconds,
+    );
+  });
 
   // Health check
   app.get('/health', async (_request, reply) => {

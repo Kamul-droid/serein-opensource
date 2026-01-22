@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { api } from '../utils/api';
 
 type AuthContextValue = {
@@ -23,6 +23,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     () => localStorage.getItem(REFRESH_TOKEN_KEY) || undefined
   );
   const [user, setUser] = useState<AuthContextValue['user']>();
+
+  useEffect(() => {
+    const syncFromStorage = () => {
+      setAccessToken(localStorage.getItem(ACCESS_TOKEN_KEY) || undefined);
+      setRefreshToken(localStorage.getItem(REFRESH_TOKEN_KEY) || undefined);
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === ACCESS_TOKEN_KEY || event.key === REFRESH_TOKEN_KEY) {
+        syncFromStorage();
+      }
+    };
+    const handleCustom = () => syncFromStorage();
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('serein:auth-updated', handleCustom as EventListener);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('serein:auth-updated', handleCustom as EventListener);
+    };
+  }, []);
 
   const login = async (email: string, password: string) => {
     const result = await api.login({ email, password });

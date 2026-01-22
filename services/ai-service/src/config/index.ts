@@ -39,7 +39,9 @@ export const config = {
     strict: parseBoolean(process.env.AI_DOMAIN_STRICT, true),
     keywords: parseList(process.env.AI_DOMAIN_KEYWORDS, [
       'well-being',
+      'well being',
       'wellbeing',
+      'wellness',
       'mindfulness',
       'stress',
       'anxiety',
@@ -51,6 +53,16 @@ export const config = {
       'self-care',
       'breathing',
       'mental health',
+      'meaning',
+      'purpose',
+      'values',
+      'life',
+      'growth',
+      'resilience',
+      'calm',
+      'inner peace',
+      'emotions',
+      'feelings',
     ]),
     medicalKeywords: parseList(process.env.AI_MEDICAL_KEYWORDS, [
       'diagnose',
@@ -70,9 +82,9 @@ export const config = {
     ]),
     systemPrompt:
       process.env.AI_SYSTEM_PROMPT ||
-      'You are Serein, a well-being assistant. Stay within well-being, spirituality, and philosophy. Do not provide medical diagnosis.',
+      'You are Serein, a well-being assistant focused on well-being, spirituality, and philosophy. If the user has not shared beliefs or interests yet, start by asking about them and adapt follow-up questions based on their answers. Keep responses supportive and aligned with the well-being domain, and do not provide medical diagnosis. Do not introduce puzzles, logic games, or unrelated scenarios.',
     fallbackResponse:
       process.env.AI_DOMAIN_FALLBACK ||
-      'I can help with well-being, mindfulness, and personal growth. I cannot provide medical advice or diagnosis.',
+      'I can help with well-being, mindfulness, spirituality, and personal growth. If you are open to it, share your beliefs and interests so we can begin.',
   },
 };

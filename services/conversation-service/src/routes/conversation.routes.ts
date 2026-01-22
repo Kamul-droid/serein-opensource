@@ -55,6 +55,31 @@ const messageSchema = {
   required: ['id', 'conversationId', 'role', 'content', 'createdAt'],
 };
 
+const trimOffTopic = (message: string): string => {
+  if (!message) {
+    return message;
+  }
+
+  const markers = [
+    '\n\n\n',
+    'Consider the following scenario',
+    "You've been tasked",
+    'Here are some clues',
+    'Question:',
+    'Answer:',
+  ];
+
+  let earliest = -1;
+  for (const marker of markers) {
+    const index = message.indexOf(marker);
+    if (index > 0 && (earliest === -1 || index < earliest)) {
+      earliest = index;
+    }
+  }
+
+  return earliest > 0 ? message.slice(0, earliest).trim() : message;
+};
+
 /**
  * Register conversation routes
  */
@@ -332,8 +357,36 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
             }
 
             let fullContent = '';
+            let sentContent = '';
             let buffer = '';
             const reader = aiResponse.body.getReader();
+            let stopStreaming = false;
+
+            const processDelta = (delta: string) => {
+              if (!delta) {
+                return;
+              }
+              const candidate = fullContent + delta;
+              const trimmed = trimOffTopic(candidate);
+              const newDelta = trimmed.slice(sentContent.length);
+              if (newDelta) {
+                sentContent = trimmed;
+                fullContent = trimmed;
+                connection.socket.send(
+                  JSON.stringify({
+                    type: 'assistant_chunk',
+                    conversationId: params.id,
+                    delta: newDelta,
+                  })
+                );
+              } else {
+                fullContent = trimmed;
+                sentContent = trimmed;
+              }
+              if (trimmed.length < candidate.length) {
+                stopStreaming = true;
+              }
+            };
 
             while (true) {
               const { done, value } = await reader.read();
@@ -351,43 +404,40 @@ export async function registerConversationRoutes(fastify: FastifyInstance): Prom
                 }
                 try {
                   const payload = JSON.parse(trimmed) as {
-                    message?: { content?: string };
+                    message?: { content?: string } | string;
                     response?: string;
                     done?: boolean;
                   };
-                  const delta = payload.message?.content ?? payload.response ?? '';
+                  const messageText =
+                    typeof payload.message === 'string' ? payload.message : payload.message?.content;
+                  const delta = messageText ?? payload.response ?? '';
                   if (delta) {
-                    fullContent += delta;
-                    connection.socket.send(
-                      JSON.stringify({
-                        type: 'assistant_chunk',
-                        conversationId: params.id,
-                        delta,
-                      })
-                    );
+                    processDelta(delta);
+                    if (stopStreaming) {
+                      break;
+                    }
                   }
                 } catch (parseError) {
                   logger.warn({ parseError, line: trimmed }, 'Failed to parse AI chunk');
                 }
+              }
+
+              if (stopStreaming) {
+                break;
               }
             }
 
             if (buffer.trim()) {
               try {
                 const payload = JSON.parse(buffer) as {
-                  message?: { content?: string };
+                  message?: { content?: string } | string;
                   response?: string;
                 };
-                const delta = payload.message?.content ?? payload.response ?? '';
-                if (delta) {
-                  fullContent += delta;
-                  connection.socket.send(
-                    JSON.stringify({
-                      type: 'assistant_chunk',
-                      conversationId: params.id,
-                      delta,
-                    })
-                  );
+                const messageText =
+                  typeof payload.message === 'string' ? payload.message : payload.message?.content;
+                const delta = messageText ?? payload.response ?? '';
+                if (delta && !stopStreaming) {
+                  processDelta(delta);
                 }
               } catch (error) {
                 logger.warn({ error, buffer }, 'Failed to parse trailing AI chunk');

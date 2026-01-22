@@ -108,18 +108,43 @@ export const selectModel = (messages: ChatMessage[], preferred?: string): string
   return config.ollama.defaultModel;
 };
 
+const isGreetingOrIntro = (text: string): boolean => {
+  const trimmed = text.trim().toLowerCase();
+  if (!trimmed) {
+    return false;
+  }
+
+  const greetingHints = [
+    'hello',
+    'hi',
+    'hey',
+    'good morning',
+    'good afternoon',
+    'good evening',
+    'start',
+    'begin',
+    'talk',
+    'chat',
+    'help',
+  ];
+
+  return greetingHints.some((hint) => trimmed.includes(hint));
+};
+
 export const applyDomainPolicy = (
   messages: ChatMessage[]
 ): { blocked: boolean; reason?: string } => {
-  const combined = messages.map((message) => message.content).join(' ').toLowerCase();
+  const userMessages = messages.filter((message) => message.role === 'user');
+  const combined = userMessages.map((message) => message.content).join(' ').toLowerCase();
   const isMedical = config.domain.medicalKeywords.some((keyword) => combined.includes(keyword));
   const isWellbeing = config.domain.keywords.some((keyword) => combined.includes(keyword));
+  const isInitialTurn = userMessages.length <= 1 && isGreetingOrIntro(combined);
 
   if (isMedical) {
     return { blocked: true, reason: 'medical' };
   }
 
-  if (config.domain.strict && !isWellbeing) {
+  if (config.domain.strict && !isWellbeing && !isInitialTurn) {
     return { blocked: true, reason: 'out-of-domain' };
   }
 
@@ -224,18 +249,51 @@ export const checkOllamaHealth = async (): Promise<boolean> => {
   }
 };
 
-const buildFallbackResponse = (model: string, reason: string): AIResponse => ({
-  message: config.domain.fallbackResponse,
-  model,
-  metadata: {
-    blocked: true,
-    reason,
-    suggestions: resourceSuggestions,
-  },
-});
+const buildFallbackResponse = (model: string, reason: string): AIResponse => {
+  const message =
+    reason === 'medical'
+      ? 'I am not a medical professional and cannot provide diagnosis or treatment. For health concerns, please consult a qualified professional. If you want well-being support, share your beliefs and interests to begin.'
+      : config.domain.fallbackResponse;
+
+  return {
+    message,
+    model,
+    metadata: {
+      blocked: true,
+      reason,
+      suggestions: resourceSuggestions,
+    },
+  };
+};
+
+const trimOffTopic = (message: string): string => {
+  if (!message) {
+    return message;
+  }
+
+  const markers = [
+    '\n\n\n',
+    'Consider the following scenario',
+    "You've been tasked",
+    'Here are some clues',
+    'Question:',
+    'Answer:',
+  ];
+
+  let earliest = -1;
+  for (const marker of markers) {
+    const index = message.indexOf(marker);
+    if (index > 0 && (earliest === -1 || index < earliest)) {
+      earliest = index;
+    }
+  }
+
+  return earliest > 0 ? message.slice(0, earliest).trim() : message;
+};
 
 const normalizeResponse = (message: string, model: string): AIResponse => {
-  if (!message || message.trim().length === 0) {
+  const cleaned = trimOffTopic(message);
+  if (!cleaned || cleaned.trim().length === 0) {
     return {
       message: "I don't know the best answer right now. Please consider a mindful pause or consult a trusted resource.",
       model,
@@ -246,7 +304,7 @@ const normalizeResponse = (message: string, model: string): AIResponse => {
   }
 
   return {
-    message,
+    message: cleaned,
     model,
     metadata: {
       suggestions: resourceSuggestions,
