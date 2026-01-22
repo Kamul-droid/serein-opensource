@@ -4,6 +4,28 @@
   "description": "Shared utilities and types for Serein Open Source",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
+    },
+    "./utils/logger": {
+      "types": "./dist/utils/logger.d.ts",
+      "require": "./dist/utils/logger.js"
+    },
+    "./utils/errors": {
+      "types": "./dist/utils/errors.d.ts",
+      "require": "./dist/utils/errors.js"
+    },
+    "./utils/startup": {
+      "types": "./dist/utils/startup.d.ts",
+      "require": "./dist/utils/startup.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/types/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

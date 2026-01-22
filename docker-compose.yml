@@ -150,6 +150,7 @@ services:
       - "3006:3006"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
       - PORT=3006
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
@@ -180,6 +181,7 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
       - PORT=3001
       - AUTH_DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein_auth
       - REDIS_URL=redis://redis:6379
@@ -188,8 +190,8 @@ services:
       - JWT_REFRESH_EXPIRES_IN=${JWT_REFRESH_EXPIRES_IN:-7d}
       - SESSION_TIMEOUT_MS=${SESSION_TIMEOUT_MS:-3600000}
       - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
-      - USER_SERVICE_URL=${USER_SERVICE_URL:-http://user-service:3002}
-      - CONVERSATION_SERVICE_URL=${CONVERSATION_SERVICE_URL:-http://conversation-service:3003}
+      - USER_SERVICE_URL=http://user-service:3002
+      - CONVERSATION_SERVICE_URL=http://conversation-service:3003
       - INTERNAL_EVENT_SECRET=${INTERNAL_EVENT_SECRET:-}
     depends_on:
       postgres:
@@ -214,6 +216,7 @@ services:
       - "3002:3002"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
       - PORT=3002
       - USER_DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein_user
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
@@ -240,6 +243,7 @@ services:
       - "3003:3003"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
       - PORT=3003
       - CONVERSATION_DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein_conversation
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
@@ -267,6 +271,7 @@ services:
       - "3004:3004"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
       - PORT=3004
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:5173}
@@ -296,6 +301,7 @@ services:
       - "3005:3005"
     environment:
       - NODE_ENV=${NODE_ENV:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
       - PORT=3005
       - CONTENT_DATABASE_URL=postgresql://serein:serein_dev_password@postgres:5432/serein_content
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
@@ -330,12 +336,24 @@ services:
       - postgres
       - redis
       - weaviate
+      - frontend-web
       - auth-service
       - user-service
       - conversation-service
       - ai-service
       - content-service
       - voice-service
+    networks:
+      - serein-network
+
+  # Frontend (Web)
+  frontend-web:
+    build:
+      context: .
+      dockerfile: frontend/web/Dockerfile
+    container_name: serein-frontend-web
+    ports:
+      - "5173:3000"
     networks:
       - serein-network
 

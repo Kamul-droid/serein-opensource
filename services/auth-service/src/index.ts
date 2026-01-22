@@ -6,12 +6,14 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
+import { attachProcessHandlers, logStartupInfo } from '@serein/shared/utils/startup';
 import { registerAuthRoutes } from './routes/auth.routes';
 import { PrismaClient } from '@prisma/client';
 import { getRedisClient } from './utils/redis';
 
 const logger = createLogger('auth-service');
 const prisma = new PrismaClient();
+attachProcessHandlers(logger, 'auth-service');
 
 const app = Fastify({
   logger: false, // We use our own logger
@@ -59,7 +61,7 @@ async function setupApp() {
     transformSpecificationClone: true,
   });
 
-  app.get('/docs/json', async () => app.swagger());
+  app.get('/docs/openapi.json', async () => app.swagger());
 
   // Health check
   app.get('/health', async (_request, reply) => {
@@ -120,6 +122,25 @@ app.setErrorHandler((error, request, reply) => {
 // Start server
 const start = async () => {
   try {
+    logStartupInfo(logger, {
+      service: 'auth-service',
+      port: config.port,
+      nodeEnv: config.nodeEnv,
+      dependencies: {
+        databaseUrl: config.database.url,
+        redisUrl: config.redis.url,
+        userServiceUrl: config.services.userUrl,
+        conversationServiceUrl: config.services.conversationUrl,
+      },
+      config: {
+        corsOrigin: config.cors.origin,
+        sessionTimeoutMs: config.session.timeoutMs,
+        jwtExpiresIn: config.jwt.accessTokenExpiresIn,
+        jwtRefreshExpiresIn: config.jwt.refreshTokenExpiresIn,
+      },
+      requiredEnv: ['AUTH_DATABASE_URL', 'REDIS_URL'],
+      optionalEnv: ['JWT_SECRET', 'USER_SERVICE_URL', 'CONVERSATION_SERVICE_URL', 'INTERNAL_EVENT_SECRET'],
+    });
     await setupApp();
     await app.listen({ port: config.port, host: '0.0.0.0' });
     logger.info(`Auth service listening on port ${config.port}`);

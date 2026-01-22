@@ -39,7 +39,7 @@ type VoiceList = {
   voices?: Array<{ id: string; name: string }>;
 };
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 const getAccessToken = () => localStorage.getItem('serein_access_token');
 
@@ -59,7 +59,19 @@ const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   });
 
   if (!response.ok) {
-    const message = await response.text();
+    const contentType = response.headers.get('content-type') || '';
+    const raw = await response.text();
+    let message = raw;
+    if (contentType.includes('application/json')) {
+      try {
+        const parsed = JSON.parse(raw) as { error?: string; message?: string };
+        message = parsed.error || parsed.message || raw;
+      } catch (err) {
+        message = raw;
+      }
+    } else if (raw.trim().startsWith('<html')) {
+      message = 'API gateway not reachable. Check VITE_API_BASE_URL and Nginx.';
+    }
     throw new Error(message || 'Request failed');
   }
 

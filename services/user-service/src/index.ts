@@ -6,12 +6,14 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
+import { attachProcessHandlers, logStartupInfo } from '@serein/shared/utils/startup';
 import { registerUserRoutes } from './routes/user.routes';
 import { registerInternalRoutes } from './routes/internal.routes';
 import { PrismaClient } from '@prisma/client';
 
 const logger = createLogger('user-service');
 const prisma = new PrismaClient();
+attachProcessHandlers(logger, 'user-service');
 
 const app = Fastify({
   logger: false, // We use our own logger
@@ -59,7 +61,7 @@ async function setupApp() {
     transformSpecificationClone: true,
   });
 
-  app.get('/docs/json', async () => app.swagger());
+  app.get('/docs/openapi.json', async () => app.swagger());
 
   // Health check
   app.get('/health', async (_request, reply) => {
@@ -117,6 +119,19 @@ app.setErrorHandler((error, request, reply) => {
 // Start server
 const start = async () => {
   try {
+    logStartupInfo(logger, {
+      service: 'user-service',
+      port: config.port,
+      nodeEnv: config.nodeEnv,
+      dependencies: {
+        databaseUrl: config.database.url,
+      },
+      config: {
+        corsOrigin: config.cors.origin,
+      },
+      requiredEnv: ['USER_DATABASE_URL'],
+      optionalEnv: ['INTERNAL_EVENT_SECRET'],
+    });
     await setupApp();
     await app.listen({ port: config.port, host: '0.0.0.0' });
     logger.info(`User service listening on port ${config.port}`);

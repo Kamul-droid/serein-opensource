@@ -7,12 +7,14 @@ import swaggerUi from '@fastify/swagger-ui';
 import websocket from '@fastify/websocket';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
+import { attachProcessHandlers, logStartupInfo } from '@serein/shared/utils/startup';
 import { registerConversationRoutes } from './routes/conversation.routes';
 import { registerInternalRoutes } from './routes/internal.routes';
 import { PrismaClient } from '@prisma/client';
 
 const logger = createLogger('conversation-service');
 const prisma = new PrismaClient();
+attachProcessHandlers(logger, 'conversation-service');
 
 const app = Fastify({
   logger: false,
@@ -59,7 +61,7 @@ async function setupApp() {
     transformSpecificationClone: true,
   });
 
-  app.get('/docs/json', async () => app.swagger());
+  app.get('/docs/openapi.json', async () => app.swagger());
 
   await app.register(websocket);
 
@@ -114,6 +116,20 @@ app.setErrorHandler((error, request, reply) => {
 
 const start = async () => {
   try {
+    logStartupInfo(logger, {
+      service: 'conversation-service',
+      port: config.port,
+      nodeEnv: config.nodeEnv,
+      dependencies: {
+        databaseUrl: config.database.url,
+        aiServiceUrl: config.services.aiUrl,
+      },
+      config: {
+        corsOrigin: config.cors.origin,
+      },
+      requiredEnv: ['CONVERSATION_DATABASE_URL'],
+      optionalEnv: ['AI_SERVICE_URL', 'INTERNAL_EVENT_SECRET'],
+    });
     await setupApp();
     await app.listen({ port: config.port, host: '0.0.0.0' });
     logger.info(`Conversation service listening on port ${config.port}`);

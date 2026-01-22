@@ -61,7 +61,7 @@ export default function ChatPage() {
 
     const wsBase =
       import.meta.env.VITE_WS_BASE_URL ||
-      (import.meta.env.VITE_API_BASE_URL || 'http://localhost').replace(/^http/, 'ws');
+      (import.meta.env.VITE_API_BASE_URL || window.location.origin).replace(/^http/, 'ws');
     const token = localStorage.getItem('serein_access_token') || '';
     const wsUrl = `${wsBase}/conversations/${selectedId}/stream?token=${encodeURIComponent(token)}`;
 

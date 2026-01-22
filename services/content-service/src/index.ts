@@ -6,12 +6,14 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
+import { attachProcessHandlers, logStartupInfo } from '@serein/shared/utils/startup';
 import { registerContentRoutes } from './routes/content.routes';
 import { PrismaClient } from '@prisma/client';
 import { checkWeaviateHealth } from './services/content.service';
 
 const logger = createLogger('content-service');
 const prisma = new PrismaClient();
+attachProcessHandlers(logger, 'content-service');
 
 const app = Fastify({
   logger: false,
@@ -58,7 +60,7 @@ async function setupApp() {
     transformSpecificationClone: true,
   });
 
-  app.get('/docs/json', async () => app.swagger());
+  app.get('/docs/openapi.json', async () => app.swagger());
 
   // Health check
   app.get('/health', async (_request, reply) => {
@@ -112,6 +114,23 @@ app.setErrorHandler((error, request, reply) => {
 
 const start = async () => {
   try {
+    logStartupInfo(logger, {
+      service: 'content-service',
+      port: config.port,
+      nodeEnv: config.nodeEnv,
+      dependencies: {
+        databaseUrl: config.database.url,
+        weaviateUrl: config.weaviate.url,
+      },
+      config: {
+        corsOrigin: config.cors.origin,
+        weaviateClass: config.weaviate.className,
+        searchDefaultLimit: config.search.defaultLimit,
+        searchMaxLimit: config.search.maxLimit,
+      },
+      requiredEnv: ['CONTENT_DATABASE_URL'],
+      optionalEnv: ['WEAVIATE_URL', 'WEAVIATE_API_KEY'],
+    });
     await setupApp();
     await app.listen({ port: config.port, host: '0.0.0.0' });
     logger.info(`Content service listening on port ${config.port}`);

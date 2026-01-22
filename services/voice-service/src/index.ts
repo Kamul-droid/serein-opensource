@@ -6,10 +6,12 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
+import { attachProcessHandlers, logStartupInfo } from '@serein/shared/utils/startup';
 import { registerVoiceRoutes } from './routes/voice.routes';
 import { checkVoiceHealth } from './services/voice.service';
 
 const logger = createLogger('voice-service');
+attachProcessHandlers(logger, 'voice-service');
 
 const app = Fastify({
   logger: false,
@@ -56,7 +58,7 @@ async function setupApp() {
     transformSpecificationClone: true,
   });
 
-  app.get('/docs/json', async () => app.swagger());
+  app.get('/docs/openapi.json', async () => app.swagger());
 
   // Health check
   app.get('/health', async (_request, reply) => {
@@ -102,6 +104,32 @@ app.setErrorHandler((error, request, reply) => {
 
 const start = async () => {
   try {
+    logStartupInfo(logger, {
+      service: 'voice-service',
+      port: config.port,
+      nodeEnv: config.nodeEnv,
+      dependencies: {
+        coquiUrl: config.coqui.url,
+        whisperUrl: config.whisper.url,
+      },
+      config: {
+        corsOrigin: config.cors.origin,
+        coquiDefaultVoice: config.coqui.defaultVoice,
+        coquiVoices: config.coqui.voices,
+        whisperModel: config.whisper.model,
+      },
+      requiredEnv: [],
+      optionalEnv: [
+        'COQUI_TTS_URL',
+        'COQUI_TTS_DEFAULT_VOICE',
+        'COQUI_TTS_SYNTHESIZE_PATH',
+        'COQUI_TTS_VOICES_PATH',
+        'COQUI_TTS_VOICES',
+        'WHISPER_URL',
+        'WHISPER_MODEL',
+        'WHISPER_TRANSCRIBE_PATH',
+      ],
+    });
     await setupApp();
     await app.listen({ port: config.port, host: '0.0.0.0' });
     logger.info(`Voice service listening on port ${config.port}`);

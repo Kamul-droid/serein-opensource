@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
@@ -26,9 +26,12 @@ RUN npx prisma generate
 RUN npm run build
 
 # Production image
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /app
+
+# Prisma requires OpenSSL at runtime
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Copy shared package (built) and service package files
 COPY --from=builder /app/shared ./shared

@@ -6,10 +6,12 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { config } from './config';
 import { createLogger } from '@serein/shared/utils/logger';
+import { attachProcessHandlers, logStartupInfo } from '@serein/shared/utils/startup';
 import { registerAiRoutes } from './routes/ai.routes';
 import { checkOllamaHealth } from './services/ai.service';
 
 const logger = createLogger('ai-service');
+attachProcessHandlers(logger, 'ai-service');
 
 const app = Fastify({
   logger: false,
@@ -56,7 +58,7 @@ async function setupApp() {
     transformSpecificationClone: true,
   });
 
-  app.get('/docs/json', async () => app.swagger());
+  app.get('/docs/openapi.json', async () => app.swagger());
 
   app.get('/health', async (_request, reply) => {
     const ollamaHealthy = await checkOllamaHealth();
@@ -108,6 +110,33 @@ app.setErrorHandler((error, request, reply) => {
 
 const start = async () => {
   try {
+    logStartupInfo(logger, {
+      service: 'ai-service',
+      port: config.port,
+      nodeEnv: config.nodeEnv,
+      dependencies: {
+        ollamaBaseUrl: config.ollama.baseUrl,
+      },
+      config: {
+        corsOrigin: config.cors.origin,
+        ollamaDefaultModel: config.ollama.defaultModel,
+        ollamaLightModels: config.ollama.lightModels,
+        ollamaHeavyModels: config.ollama.heavyModels,
+        ollamaTimeoutMs: config.ollama.timeoutMs,
+        ollamaRetries: config.ollama.retries,
+        ollamaBreakerThreshold: config.ollama.breakerThreshold,
+        ollamaBreakerCooldownMs: config.ollama.breakerCooldownMs,
+        domainStrict: config.domain.strict,
+      },
+      requiredEnv: [],
+      optionalEnv: [
+        'OLLAMA_BASE_URL',
+        'OLLAMA_DEFAULT_MODEL',
+        'OLLAMA_LIGHT_MODELS',
+        'OLLAMA_HEAVY_MODELS',
+        'AI_DOMAIN_STRICT',
+      ],
+    });
     await setupApp();
     await app.listen({ port: config.port, host: '0.0.0.0' });
     logger.info(`AI service listening on port ${config.port}`);
