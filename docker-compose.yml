@@ -307,7 +307,7 @@ services:
       - OLLAMA_BASE_URL=http://ollama:11434
       - OLLAMA_DEFAULT_MODEL=phi
       - OLLAMA_LIGHT_MODELS=phi
-      - OLLAMA_HEAVY_MODELS=${OLLAMA_HEAVY_MODELS:-llama2,mistral-large}
+      - OLLAMA_HEAVY_MODELS=${OLLAMA_HEAVY_MODELS:-phi}
       - AI_DOMAIN_STRICT=${AI_DOMAIN_STRICT:-true}
     depends_on:
       ollama:

@@ -30,6 +30,7 @@ export const config = {
     defaultModel: process.env.OLLAMA_DEFAULT_MODEL || 'llama2',
     lightModels: parseList(process.env.OLLAMA_LIGHT_MODELS, ['phi', 'mistral']),
     heavyModels: parseList(process.env.OLLAMA_HEAVY_MODELS, ['llama2', 'mistral-large']),
+    keepAlive: process.env.OLLAMA_KEEP_ALIVE || '10m',
     timeoutMs: parseInt(process.env.OLLAMA_TIMEOUT_MS || '60000', 10),
     retries: parseInt(process.env.OLLAMA_RETRIES || '2', 10),
     breakerThreshold: parseInt(process.env.OLLAMA_BREAKER_THRESHOLD || '3', 10),

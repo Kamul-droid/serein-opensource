@@ -171,6 +171,12 @@ const withCircuitBreaker = async <T>(fn: () => Promise<T>): Promise<T> => {
   }
 };
 
+const buildOllamaUrl = (path: string): string => {
+  const baseUrl = config.ollama.baseUrl.replace(/\/+$/, '');
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${baseUrl}${normalizedPath}`;
+};
+
 const requestOllama = async (
   path: string,
   options: {
@@ -179,7 +185,7 @@ const requestOllama = async (
     stream?: boolean;
   }
 ): Promise<Response> => {
-  const url = `${config.ollama.baseUrl}${path}`;
+  const url = buildOllamaUrl(path);
   const method = options.method ?? 'POST';
   const payload = options.body ? JSON.stringify(options.body) : undefined;
 
@@ -216,7 +222,11 @@ const requestOllama = async (
       }
     }
 
-    logger.error({ error: lastError }, 'Ollama request failed');
+    const errorPayload =
+      lastError instanceof Error
+        ? { message: lastError.message, stack: lastError.stack }
+        : lastError;
+    logger.error({ error: errorPayload }, 'Ollama request failed');
     throw new ServiceUnavailableError('ollama', {
       reason: 'request-failed',
     });
@@ -312,6 +322,15 @@ const normalizeResponse = (message: string, model: string): AIResponse => {
   };
 };
 
+const buildUnavailableResponse = (model: string): AIResponse => ({
+  message: 'I am warming up right now. Please try again in a moment.',
+  model,
+  metadata: {
+    unavailable: true,
+    suggestions: resourceSuggestions,
+  },
+});
+
 export const chat = async (request: ChatRequest): Promise<AIResponse> => {
   const policy = applyDomainPolicy(request.messages);
   const model = selectModel(request.messages, request.model);
@@ -321,16 +340,25 @@ export const chat = async (request: ChatRequest): Promise<AIResponse> => {
   }
 
   const messages = buildMessages(request.messages, request.userContext);
-  const response = await requestOllama('/api/chat', {
-    body: {
-      model,
-      messages,
-      stream: false,
-      options: {
-        temperature: request.temperature ?? 0.7,
+  let response: Response;
+  try {
+    response = await requestOllama('/api/chat', {
+      body: {
+        model,
+        messages,
+        stream: false,
+        keep_alive: config.ollama.keepAlive,
+        options: {
+          temperature: request.temperature ?? 0.7,
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    if (error instanceof ServiceUnavailableError) {
+      return buildUnavailableResponse(model);
+    }
+    throw error;
+  }
 
   const data = (await response.json()) as {
     message?: { content?: string };
@@ -352,16 +380,28 @@ export const streamChat = async (request: ChatRequest): Promise<StreamResult> =>
   }
 
   const messages = buildMessages(request.messages, request.userContext);
-  const response = await requestOllama('/api/chat', {
-    body: {
-      model,
-      messages,
-      stream: true,
-      options: {
-        temperature: request.temperature ?? 0.7,
+  let response: Response;
+  try {
+    response = await requestOllama('/api/chat', {
+      body: {
+        model,
+        messages,
+        stream: true,
+        keep_alive: config.ollama.keepAlive,
+        options: {
+          temperature: request.temperature ?? 0.7,
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    if (error instanceof ServiceUnavailableError) {
+      return {
+        type: 'blocked',
+        response: buildUnavailableResponse(model),
+      };
+    }
+    throw error;
+  }
 
   const stream = toAsyncIterable(response.body);
 
